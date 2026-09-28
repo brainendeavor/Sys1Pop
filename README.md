@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand_kit/sys1pop_banner_dark.jpg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/brand_kit/sys1pop_banner_light.jpg">
+    <img alt="Sys1Pop: Autonomous Edge Decision Engine" src="docs/brand_kit/sys1pop_banner_dark.jpg" width="100%">
+  </picture>
+</p>
+
 # Sys1Pop: Autonomous Edge Decision Engine in Cloudflare Workers
 
 An ultra-lean, autonomous "System 1" decision engine and RAG triage pipeline deployed inside Cloudflare Workers across global **PoPs** (Points of Presence) using pure Rust, Hugging Face **Candle**, and WebAssembly (`wasm32-unknown-unknown` + SIMD128).
@@ -18,6 +26,7 @@ An ultra-lean, autonomous "System 1" decision engine and RAG triage pipeline dep
 
 - 📊 **[Economics & Benchmarks](docs/economics_and_benchmarks.md):** Side-by-side cost breakdown comparing Worker CPU time, Workers AI Neurons, and cloud LLMs across 100K, 1M, and 10M requests.
 - 📖 **[Frontier LLM Distillation Spec](docs/SPEC.md):** Specification for Claude, Gemini, and GPT to distill custom edge models.
+- 🎨 **[Brand Guidelines & Design Kit](docs/brand_kit/BRAND_GUIDELINES.md):** Official banners, shield emblems, Nixie logotype, and color tokens.
 
 ---
 
@@ -32,6 +41,7 @@ Sys1Pop
 ├── docs/
 │   ├── SPEC.md                      # Promptable LLM Teacher specification
 │   ├── economics_and_benchmarks.md  # Detailed financial & latency metrics
+│   ├── brand_kit/                   # Official logo emblems, banners, and design guidelines
 │   └── prompts/
 │       └── distill_teacher.md       # Synthetic dataset generation prompt templates
 ├── examples/
