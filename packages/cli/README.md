@@ -1,0 +1,64 @@
+# Sys1Pop CLI (`npx sys1pop`)
+
+The developer command-line interface for **Sys1Pop** — the autonomous, zero-latency "System 1" decision engine and RAG triage microservice running in Cloudflare Workers.
+
+---
+
+## Installation & Usage
+
+You can run the CLI directly via `npx`:
+
+```bash
+npx sys1pop <command> [options]
+```
+
+Or install it globally:
+
+```bash
+npm install -g sys1pop
+```
+
+---
+
+## Available Commands
+
+### 1. `sys1pop deploy`
+Builds and deploys the turnkey Sys1Pop worker microservice directly into your Cloudflare account with SIMD128 vector acceleration enabled.
+
+```bash
+npx sys1pop deploy
+```
+
+### 2. `sys1pop seed-catalog`
+Syncs the pre-quantized foundation models into your Cloudflare R2 bucket (`sys1-models`):
+* `sys1-base`: 33.4M parameter general semantic representation & decision backbone.
+* `rag-reranker`: 33.4M parameter passage cross-encoder for RAG triage.
+* `intent-router`: 33.4M parameter multi-action intent routing backbone.
+
+```bash
+npx sys1pop seed-catalog [--bucket <name>]
+```
+
+### 3. `sys1pop model push <dir>`
+Validates any custom model directory against the `docs/SPEC.md` edge constraints (asserting `manifest.json`, `model.safetensors`, `tokenizer.json`, `config.json`, and size ≤ 35MB), then uploads it directly to your Cloudflare R2 bucket.
+
+```bash
+npx sys1pop model push ./dist/my-model --name legal-triage-v1
+```
+
+### 4. `sys1pop model list`
+Lists all models currently resident in warm isolate RAM across active edge worker instances.
+
+```bash
+npx sys1pop model list [--endpoint <url>]
+```
+
+### 5. `sys1pop model test <model-id>`
+Runs a live synthetic latency and memory audit against the edge worker:
+* Measures cold-start forward pass latency (~25–35 ms).
+* Measures in-isolate LRU cache hit latency (<0.05 ms at $0.00 CPU cost).
+* Asserts decision head output calibration.
+
+```bash
+npx sys1pop model test sys1-base [--endpoint <url>]
+```

@@ -1,0 +1,13 @@
+name = "sys1pop"
+main = "build/worker/shim.mjs"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare R2 bucket binding for streaming model weights
+[[r2_buckets]]
+binding = "MODELS"
+bucket_name = "sys1-models"
+
+# Cloudflare Worker Paid resource configuration (allows up to 512MB RAM)
+[limits]
+cpu_ms = 5000
