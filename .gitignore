@@ -1,0 +1,8 @@
+/target
+.wrangler/
+build/
+dist/
+*.wasm
+.DS_Store
+node_modules/
+brand_concepts/
