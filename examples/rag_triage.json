@@ -1,0 +1,29 @@
+{
+  "state": "User Query: How do I configure Cloudflare R2 bucket bindings in wrangler.toml?",
+  "context_chunks": [
+    "Doc 1: Cloudflare R2 allows developers to store unstructured data without egress bandwidth fees. You can create buckets using wrangler r2 bucket create <NAME>.",
+    "Doc 2: To bind an R2 bucket to your Worker, add [[r2_buckets]] to wrangler.toml with 'binding' and 'bucket_name' fields. In your Worker code, access it via env.<BINDING>.",
+    "Doc 3: Cloudflare KV is an ultra-low latency key-value store optimized for high-volume read workloads with eventual consistency."
+  ],
+  "questions": [
+    {
+      "id": "sufficient_context",
+      "type": "boolean"
+    },
+    {
+      "id": "action_required",
+      "type": "choice",
+      "options": [
+        "generate_answer",
+        "fetch_more_docs",
+        "clarify_with_user"
+      ]
+    },
+    {
+      "id": "relevance_rating",
+      "type": "score",
+      "min": 1,
+      "max": 5
+    }
+  ]
+}

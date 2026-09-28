@@ -1,0 +1,26 @@
+{
+  "state": "Site: example.com | Name: Alex Taylor | Email: alex.marketing@example.com | Message: Hello team, I noticed your website has great content but low Google ranking. We offer high-quality backlinks and guest posts with DA 80+ to get you to #1 on search engines. Contact my handle: @example_marketer",
+  "questions": [
+    {
+      "id": "is_spam",
+      "type": "boolean"
+    },
+    {
+      "id": "spam_category",
+      "type": "choice",
+      "options": [
+        "legitimate_inquiry",
+        "commercial_sales_pitch",
+        "seo_backlink_spam",
+        "crypto_phishing",
+        "automated_bot_gibberish"
+      ]
+    },
+    {
+      "id": "risk_score",
+      "type": "score",
+      "min": 1,
+      "max": 5
+    }
+  ]
+}
