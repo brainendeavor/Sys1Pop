@@ -1,7 +1,8 @@
 /target
 .wrangler/
-build/
-dist/
+/dist/
+packages/cli/dist/
+!packages/sdk/dist/
 *.wasm
 .DS_Store
 node_modules/

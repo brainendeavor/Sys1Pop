@@ -1,0 +1,25 @@
+{
+  "name": "@sys1pop/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Sys1Pop autonomous edge decision engine in Cloudflare Workers",
+  "main": "packages/sdk/dist/index.js",
+  "module": "packages/sdk/dist/index.mjs",
+  "types": "packages/sdk/dist/index.d.ts",
+  "files": [
+    "packages/sdk/dist"
+  ],
+  "scripts": {
+    "build": "npm run --prefix packages/sdk build",
+    "test": "node --test packages/sdk/test/client.test.mjs"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "service-bindings",
+    "edge-ai",
+    "candle",
+    "rag",
+    "triage",
+    "wasm"
+  ],
+  "license": "Apache-2.0"
+}
