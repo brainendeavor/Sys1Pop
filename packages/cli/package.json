@@ -17,7 +17,7 @@
     "candle",
     "cli"
   ],
-  "license": "Apache-2.0",
+  "license": "MIT OR Apache-2.0",
   "dependencies": {
     "@sys1pop/sdk": "file:../sdk"
   },

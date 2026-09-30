@@ -3,6 +3,7 @@ name = "sys1pop-worker"
 version = "0.1.0"
 edition = "2021"
 description = "Turnkey Cloudflare Worker microservice for Sys1Pop"
+license = "MIT OR Apache-2.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
