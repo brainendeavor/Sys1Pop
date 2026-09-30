@@ -13,7 +13,7 @@
     "deploy": "./scripts/deploy-worker.sh",
     "deploy:worker": "./scripts/deploy-worker.sh",
     "deploy:models": "./scripts/deploy-models.sh",
-    "export:examples": "python3 tools/export_examples.py",
+    "export:models": "uv run --with \"torch,transformers,scikit-learn,safetensors\" tools/export_models.py",
     "build": "npm run --prefix packages/sdk build",
     "test": "node --test packages/sdk/test/client.test.mjs"
   },

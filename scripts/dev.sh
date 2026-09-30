@@ -54,8 +54,12 @@ echo ""
 
 # 1. Ensure local model bundles are present
 if [[ ! -f "$DIST_DIR/catalog.json" ]]; then
-  echo "📦 Generating local example models in $DIST_DIR..."
-  python3 tools/export_examples.py --output-dir "$DIST_DIR"
+  echo "📦 Generating local model bundles in $DIST_DIR..."
+  if command -v uv >/dev/null 2>&1; then
+    uv run --with "torch,transformers,scikit-learn,safetensors" tools/export_models.py --output-dir "$DIST_DIR"
+  else
+    python3 tools/export_models.py --output-dir "$DIST_DIR"
+  fi
 fi
 
 # 2. Check and compile Worker WASM bundle

@@ -81,11 +81,15 @@ else
   echo "  ✓ Bucket '$BUCKET' confirmed."
 fi
 
-# 2. Generate INT8 bundles & catalog if needed
+# 2. Generate model bundles & catalog if needed
 if [[ "$SKIP_EXPORT" == "false" ]]; then
   echo ""
-  echo "⚙️ Generating spec-compliant INT8 model bundles and catalog..."
-  python3 tools/export_examples.py --output-dir "$DIST_DIR"
+  echo "⚙️ Generating spec-compliant neural model bundles and catalog..."
+  if command -v uv >/dev/null 2>&1; then
+    uv run --with "torch,transformers,scikit-learn,safetensors" tools/export_models.py --output-dir "$DIST_DIR"
+  else
+    python3 tools/export_models.py --output-dir "$DIST_DIR"
+  fi
 fi
 
 # 3. Upload model bundles and catalog to R2
