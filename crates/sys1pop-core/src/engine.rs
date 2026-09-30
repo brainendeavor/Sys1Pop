@@ -85,14 +85,7 @@ impl Sys1Engine {
         let mut forward_pass_ms = 0.0;
         let mut decisions = HashMap::new();
 
-        // 1. Evaluate RAG chunks if provided
-        let triage_result = if !req.context_chunks.is_empty() {
-            Some(self.triage.evaluate_with_config(&req.state, &req.context_chunks, req.triage_config.as_ref()))
-        } else {
-            None
-        };
-
-        // 2. Encode input state through Tokenizer and Transformer Backbone
+        // 1. Encode input state through Tokenizer and Transformer Backbone
         let h_pooled = if let Some(ref tokenizer) = self.tokenizer {
             #[cfg(not(target_arch = "wasm32"))]
             let t_tok = std::time::Instant::now();
@@ -113,11 +106,33 @@ impl Sys1Engine {
             Tensor::zeros((1, self.backbone.hidden_dim), candle_core::DType::F32, &self.backbone.device)?
         };
 
-        // Normalize pooled embedding for projection
+        // Normalize pooled embedding for projection and similarity
         let h_norm = {
             let sum_sq = h_pooled.sqr()?.sum_keepdim(candle_core::D::Minus1)?;
             let norm = (sum_sq + 1e-9)?.sqrt()?;
             h_pooled.broadcast_div(&norm)?
+        };
+
+        // 2. Evaluate RAG context chunks if provided using neural embedding cosine similarity
+        let triage_result = if !req.context_chunks.is_empty() {
+            let mut chunk_scores = Vec::with_capacity(req.context_chunks.len());
+            for chunk in &req.context_chunks {
+                if let Some(ref tokenizer) = self.tokenizer {
+                    let enc = tokenizer.encode(chunk.as_str(), true)
+                        .map_err(|e| Error::Engine(e.to_string()))?;
+                    let input_ids = Tensor::new(enc.get_ids(), &self.backbone.device)?.unsqueeze(0)?;
+                    let chunk_pooled = self.backbone.forward(&input_ids)?;
+                    let sum_sq = chunk_pooled.sqr()?.sum_keepdim(candle_core::D::Minus1)?;
+                    let chunk_norm = chunk_pooled.broadcast_div(&(sum_sq + 1e-9)?.sqrt()?)?;
+                    let sim = h_norm.matmul(&chunk_norm.t()?)?.flatten_all()?.to_vec1::<f32>()?[0];
+                    chunk_scores.push(sim.max(0.0).min(1.0));
+                } else {
+                    chunk_scores.push(0.0);
+                }
+            }
+            Some(self.triage.evaluate_scores(&chunk_scores, req.triage_config.as_ref()))
+        } else {
+            None
         };
 
         // 3. Evaluate typed questions via neural projection heads
@@ -319,5 +334,83 @@ mod tests {
         if let DecisionResult::Choice { winner, .. } = &clean_res.decisions["spam_category"] {
             assert_eq!(winner, "legitimate_inquiry");
         } else { panic!("Expected choice result"); }
+    }
+
+    #[test]
+    fn test_neural_rag_triage_semantic_scoring() {
+        let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let model_dir = manifest_dir.join("../../dist/models/sys1-base");
+
+        let engine = Sys1Engine::load_from_dir("sys1-base", &model_dir)
+            .expect("Failed to load real neural model bundle from dist/models/sys1-base");
+
+        let req = DecisionRequest {
+            model: Some("sys1-base".to_string()),
+            state: "How do I configure Cloudflare R2 bucket bindings in wrangler.toml?".to_string(),
+            context_chunks: vec![
+                "To bind an R2 bucket to your Worker, add [[r2_buckets]] to wrangler.toml with 'binding' and 'bucket_name' fields.".to_string(),
+                "Cloudflare R2 provides zero egress fee object storage for web workers and media assets.".to_string(),
+                "The classic chocolate chip cookie recipe calls for flour, butter, brown sugar, and baking powder.".to_string(),
+            ],
+            triage_config: Some(crate::contract::TriageConfig {
+                relevance_threshold: 0.35,
+                sufficiency_threshold: 0.5,
+                strategy: None,
+                max_retained_chunks: None,
+            }),
+            questions: vec![],
+        };
+
+        let res = engine.execute(req).unwrap();
+        assert!(res.triage.is_some(), "Expected triage result");
+        let triage = res.triage.unwrap();
+        assert_eq!(triage.chunks_evaluated, 3);
+        // Doc 0 (R2 wrangler binding) must have higher cosine similarity than Doc 2 (chocolate chip cookies)
+        assert!(triage.relevance_scores[0] > triage.relevance_scores[2]);
+        assert!(triage.relevance_scores[0] > 0.40, "R2 docs must have high relevance");
+        assert!(triage.relevance_scores[2] < 0.35, "Cookie recipe must have low relevance");
+        // Retained chunks should include Doc 0 and Doc 1, but NOT Doc 2
+        assert!(triage.retained_chunks.contains(&0));
+        assert!(!triage.retained_chunks.contains(&2));
+    }
+
+    #[test]
+    fn test_neural_sys1_base_intent_classification() {
+        let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let model_dir = manifest_dir.join("../../dist/models/sys1-base");
+
+        let engine = Sys1Engine::load_from_dir("sys1-base", &model_dir)
+            .expect("Failed to load real neural model bundle from dist/models/sys1-base");
+
+        let questions = vec![
+            Question::Choice {
+                id: "primary_intent".to_string(),
+                options: vec![
+                    "information_lookup".to_string(),
+                    "transaction_request".to_string(),
+                    "escalation".to_string(),
+                    "general_feedback".to_string(),
+                ],
+            },
+            Question::Boolean { id: "requires_action".to_string() },
+        ];
+
+        let req = DecisionRequest {
+            model: Some("sys1-base".to_string()),
+            state: "Our production database is experiencing connection exhaustion and 500 errors across all nodes, critical!".to_string(),
+            context_chunks: vec![],
+            triage_config: None,
+            questions,
+        };
+
+        let res = engine.execute(req).unwrap();
+        if let DecisionResult::Choice { winner, confidence, .. } = &res.decisions["primary_intent"] {
+            assert_eq!(winner, "escalation");
+            assert!(*confidence > 0.60);
+        } else { panic!("Expected choice result"); }
+
+        if let DecisionResult::Boolean { value, .. } = &res.decisions["requires_action"] {
+            assert!(value, "Outage requires action");
+        } else { panic!("Expected boolean result"); }
     }
 }
