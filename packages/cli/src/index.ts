@@ -60,10 +60,15 @@ function parseArgs(args: string[]) {
   return { positional, flags };
 }
 
-async function handleDeploy() {
-  console.log("\n🚀 Building and deploying Sys1Pop Worker with SIMD128 vector acceleration...");
+async function handleDeploy(flags: Record<string, string | boolean>) {
+  const enableUi = flags["disable-ui"] ? "false" : "true";
+  const apiToken = (flags["api-token"] as string) || "";
+  console.log(`\n🚀 Building and deploying Sys1Pop Worker with SIMD128 vector acceleration (UI: ${enableUi})...`);
   try {
-    execSync("npx wrangler deploy", { stdio: "inherit" });
+    let cmd = `npx wrangler deploy --var ENABLE_UI:${enableUi}`;
+    if (apiToken) cmd += ` --var API_TOKEN:${apiToken}`;
+    if (flags.env) cmd += ` --env ${flags.env}`;
+    execSync(cmd, { stdio: "inherit" });
     console.log("\n✅ Sys1Pop Worker deployed successfully!");
   } catch (err) {
     console.error("❌ Deployment failed. Ensure wrangler is authenticated ('npx wrangler login').");
@@ -223,6 +228,43 @@ async function handleModelTest(modelId: string, flags: Record<string, string | b
   }
 }
 
+
+
+async function handleModelUnload(modelId: string, flags: Record<string, string | boolean>) {
+  const endpoint = (flags.endpoint as string) || "http://localhost:8787";
+  const token = (flags.token as string) || process.env.API_TOKEN || "";
+  console.log(`\n⏏️ Evicting model '${modelId}' from isolate RAM at ${endpoint}...`);
+
+  try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(`${endpoint}/v1/models/unload`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ model: modelId }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log(`✅ Model '${modelId}' successfully unloaded from isolate memory.`);
+      console.log("Remaining warm models:", data.remaining_warm);
+    } else {
+      const text = await res.text();
+      console.error(`❌ Unload failed (${res.status}): ${text}`);
+    }
+  } catch (err: any) {
+    console.error(`❌ Network error during unload: ${err.message}`);
+  }
+}
+
+async function handleDeployExamples(flags: Record<string, string | boolean>) {
+  const bucket = (flags.bucket as string) || "sys1-models";
+  let cmd = `./scripts/deploy-models.sh --bucket ${bucket}`;
+  if (flags.endpoint) cmd += ` --endpoint ${flags.endpoint}`;
+  execSync(cmd, { stdio: "inherit" });
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const { positional, flags } = parseArgs(args);
@@ -240,9 +282,9 @@ async function main() {
   const [cmd, subcmd, ...rest] = positional;
 
   if (cmd === "deploy") {
-    await handleDeploy();
-  } else if (cmd === "seed-catalog") {
-    await handleSeedCatalog(flags);
+    await handleDeploy(flags);
+  } else if (cmd === "seed-catalog" || cmd === "deploy-models") {
+    await handleDeployExamples(flags);
   } else if (cmd === "model") {
     if (subcmd === "push") {
       await handleModelPush(rest[0], flags);
@@ -250,6 +292,10 @@ async function main() {
       await handleModelList(flags);
     } else if (subcmd === "test") {
       await handleModelTest(rest[0] || "sys1-base", flags);
+    } else if (subcmd === "unload") {
+      await handleModelUnload(rest[0] || "sys1-base", flags);
+    } else if (subcmd === "deploy-examples") {
+      await handleDeployExamples(flags);
     } else {
       console.error(`Unknown model subcommand: ${subcmd}`);
       printHelp();

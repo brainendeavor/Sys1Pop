@@ -7,3 +7,9 @@ packages/cli/dist/
 .DS_Store
 node_modules/
 brand_concepts/
+
+# Local environment & secret variables
+.env*
+.dev.vars*
+wrangler.overrides.toml
+wrangler.local.toml

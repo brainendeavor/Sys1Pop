@@ -18,12 +18,72 @@ pub fn get_or_init_registry() -> &'static ModelRegistry {
     REGISTRY.get_or_init(ModelRegistry::default)
 }
 
+fn verify_admin_auth(req: &Request, env: &Env) -> Result<Option<Response>> {
+    // Check if admin API is explicitly disabled
+    if let Ok(enabled_var) = env.var("ENABLE_ADMIN_API") {
+        let val = enabled_var.to_string().to_lowercase();
+        if val == "false" || val == "0" || val == "no" {
+            return Ok(Some(Response::error("Admin lifecycle API is disabled", 403)?));
+        }
+    }
+
+    // Check API_TOKEN if configured
+    if let Ok(expected_token) = env.var("API_TOKEN").or_else(|_| env.secret("API_TOKEN")) {
+        let expected = expected_token.to_string();
+        if !expected.is_empty() {
+            let headers = req.headers();
+            let auth_header = headers.get("Authorization").ok().flatten();
+            let x_token = headers.get("X-API-Token").ok().flatten();
+
+            let token = auth_header
+                .and_then(|h| h.strip_prefix("Bearer ").map(|s| s.to_string()))
+                .or(x_token);
+
+            match token {
+                Some(t) if t == expected => (),
+                _ => return Ok(Some(Response::error("Unauthorized: Invalid or missing API token", 401)?)),
+            }
+        }
+    }
+    Ok(None)
+}
+
 #[event(fetch)]
 pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response> {
     let method = req.method();
     let path = req.path();
 
     match (method, path.as_str()) {
+        (Method::Get, "/") | (Method::Get, "/ui") => {
+            let enable_ui = env.var("ENABLE_UI")
+                .map(|v| {
+                    let val = v.to_string().to_lowercase();
+                    val == "true" || val == "1" || val == "yes" || val == "on"
+                })
+                .unwrap_or(false);
+
+            if enable_ui {
+                let html = include_str!("../ui/index.html");
+                let mut headers = Headers::new();
+                let _ = headers.set("Content-Type", "text/html; charset=utf-8");
+                let _ = headers.set("Cache-Control", "no-cache");
+                return Response::ok(html).map(|r| r.with_headers(headers));
+            }
+
+            Response::from_json(&serde_json::json!({
+                "service": "sys1pop",
+                "version": "0.1.0",
+                "status": "online",
+                "engine": "candle-wasm",
+                "ui": "disabled",
+                "endpoints": {
+                    "decide": "POST /v1/decide",
+                    "models": "GET /v1/models",
+                    "health": "GET /health"
+                },
+                "hint": "Set ENABLE_UI=true in wrangler.toml or Cloudflare environment variables to activate the interactive test playground."
+            }))
+        }
         (Method::Get, "/health") => {
             let registry = get_or_init_registry();
             let cache = get_or_init_cache();
@@ -42,8 +102,39 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
         }
         (Method::Get, "/v1/models") => {
             let registry = get_or_init_registry();
-            let models = registry.loaded_models();
-            Response::from_json(&serde_json::json!({ "models": models }))
+            let catalog = registry.get_catalog(&env).await;
+            Response::from_json(&catalog)
+        }
+        (Method::Post, "/v1/models/unload") => {
+            if let Some(err_resp) = verify_admin_auth(&req, &env)? {
+                return Ok(err_resp);
+            }
+            #[derive(serde::Deserialize)]
+            struct UnloadReq {
+                model: String,
+            }
+            let unload_body: UnloadReq = match req.json().await {
+                Ok(b) => b,
+                Err(err) => return Response::error(format!("Invalid JSON request: {err}"), 400),
+            };
+            let registry = get_or_init_registry();
+            let unloaded = registry.unload(&unload_body.model);
+            Response::from_json(&serde_json::json!({
+                "status": if unloaded { "unloaded" } else { "not_found" },
+                "model": unload_body.model,
+                "remaining_warm": registry.loaded_models()
+            }))
+        }
+        (Method::Post, "/v1/cache/clear") => {
+            if let Some(err_resp) = verify_admin_auth(&req, &env)? {
+                return Ok(err_resp);
+            }
+            let cache = get_or_init_cache();
+            cache.clear();
+            Response::from_json(&serde_json::json!({
+                "status": "cleared",
+                "cache_entries": 0
+            }))
         }
         (Method::Post, "/v1/decide") => {
             let body: DecisionRequest = match req.json().await {

@@ -9,6 +9,11 @@
     "packages/sdk/dist"
   ],
   "scripts": {
+    "dev": "./scripts/dev.sh",
+    "deploy": "./scripts/deploy-worker.sh",
+    "deploy:worker": "./scripts/deploy-worker.sh",
+    "deploy:models": "./scripts/deploy-models.sh",
+    "export:examples": "python3 tools/export_examples.py",
     "build": "npm run --prefix packages/sdk build",
     "test": "node --test packages/sdk/test/client.test.mjs"
   },

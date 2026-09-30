@@ -73,6 +73,12 @@ impl DecisionCache {
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
+
+    pub fn clear(&self) {
+        if let Ok(mut lock) = self.inner.lock() {
+            lock.clear();
+        }
+    }
 }
 
 #[cfg(test)]
