@@ -1,4 +1,6 @@
 /target
+crates/**/target/
+/build/
 .wrangler/
 /dist/
 packages/cli/dist/

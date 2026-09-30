@@ -3,6 +3,9 @@ main = "build/worker/shim.mjs"
 compatibility_date = "2026-09-01"
 compatibility_flags = ["nodejs_compat"]
 
+[build]
+command = "cd crates/sys1pop-worker && worker-build --dev && mkdir -p ../../build && cp -R build/ ../../build/"
+
 # Cloudflare R2 bucket binding for streaming model weights
 [[r2_buckets]]
 binding = "MODELS"

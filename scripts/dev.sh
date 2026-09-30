@@ -5,7 +5,7 @@
 # ==============================================================================
 set -euo pipefail
 
-PORT=8787
+PORT=6061
 DIST_DIR="./dist/models"
 
 print_help() {
@@ -16,12 +16,12 @@ USAGE:
   ./scripts/dev.sh [options]
 
 OPTIONS:
-  --port <number>       Local dev server port (default: 8787)
+  --port <number>       Local dev server port (default: 6061)
   --help, -h            Show this help message
 
 EXAMPLES:
   ./scripts/dev.sh
-  ./scripts/dev.sh --port 9000
+  ./scripts/dev.sh --port 5751
 EOF
 }
 
@@ -58,9 +58,14 @@ if [[ ! -f "$DIST_DIR/catalog.json" ]]; then
   python3 tools/export_examples.py --output-dir "$DIST_DIR"
 fi
 
-# 2. Check cargo target build
-echo "🔨 Verifying local Worker build..."
-CARGO_TARGET_DIR=./target cargo check -p sys1pop-worker
+# 2. Check and compile Worker WASM bundle
+if [[ ! -f "build/worker/shim.mjs" ]]; then
+  echo "🔨 Compiling Worker WASM bundle with worker-build..."
+  (cd crates/sys1pop-worker && worker-build --dev)
+  mkdir -p build && cp -R crates/sys1pop-worker/build/ build/
+else
+  echo "🔨 Worker WASM bundle ready at build/worker/shim.mjs."
+fi
 
 # 3. Launch Wrangler dev with UI enabled
 echo ""

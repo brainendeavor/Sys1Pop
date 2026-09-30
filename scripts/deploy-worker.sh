@@ -93,8 +93,9 @@ EOF
 fi
 
 # 2. Build worker WASM
-echo "🔨 Compiling Sys1Pop Worker with SIMD128 vector acceleration..."
-CARGO_TARGET_DIR=./target cargo check -p sys1pop-worker
+echo "🔨 Compiling Sys1Pop Worker with worker-build (--release)..."
+(cd crates/sys1pop-worker && worker-build --release)
+mkdir -p build && cp -R crates/sys1pop-worker/build/ build/
 
 # 3. Construct Wrangler Deploy command
 DEPLOY_CMD=("npx" "wrangler" "deploy" "--var" "ENABLE_UI:${ENABLE_UI}")

@@ -22,7 +22,7 @@ COMMANDS:
   model test <model-id>     Run live inference latency & cache verification
 
 OPTIONS:
-  --endpoint <url>          Sys1Pop worker endpoint (default: http://localhost:8787)
+  --endpoint <url>          Sys1Pop worker endpoint (default: http://localhost:6061)
   --name <model-id>         Override model ID for push/test
   --bucket <name>           Cloudflare R2 bucket name (default: sys1-models)
   --help, -h                Show this help message
@@ -32,7 +32,7 @@ EXAMPLES:
   sys1pop deploy
   sys1pop seed-catalog
   sys1pop model push ./dist/my-model --name legal-triage-v1
-  sys1pop model test legal-triage-v1 --endpoint http://localhost:8787
+  sys1pop model test legal-triage-v1 --endpoint http://localhost:6061
 `);
 }
 
@@ -164,7 +164,7 @@ async function handleSeedCatalog(flags: Record<string, string | boolean>) {
 }
 
 async function handleModelList(flags: Record<string, string | boolean>) {
-  const endpoint = (flags.endpoint as string) || "http://localhost:8787";
+  const endpoint = (flags.endpoint as string) || "http://localhost:6061";
   const sys1 = new Sys1Pop(endpoint);
 
   try {
@@ -183,7 +183,7 @@ async function handleModelList(flags: Record<string, string | boolean>) {
 }
 
 async function handleModelTest(modelId: string, flags: Record<string, string | boolean>) {
-  const endpoint = (flags.endpoint as string) || "http://localhost:8787";
+  const endpoint = (flags.endpoint as string) || "http://localhost:6061";
   const sys1 = new Sys1Pop(endpoint);
 
   console.log(`\n🧪 Testing live edge inference for model '${modelId}' at ${endpoint}...`);
@@ -231,7 +231,7 @@ async function handleModelTest(modelId: string, flags: Record<string, string | b
 
 
 async function handleModelUnload(modelId: string, flags: Record<string, string | boolean>) {
-  const endpoint = (flags.endpoint as string) || "http://localhost:8787";
+  const endpoint = (flags.endpoint as string) || "http://localhost:6061";
   const token = (flags.token as string) || process.env.API_TOKEN || "";
   console.log(`\n⏏️ Evicting model '${modelId}' from isolate RAM at ${endpoint}...`);
 
