@@ -31,7 +31,8 @@ Sys1Pop's brand identity reflects the convergence of **retro computer craftsmans
 
 All canonical assets are stored in this directory (`docs/brand_kit/`):
 
-### 1. Banner Lockups (16:9 Widescreen)
+### 1. Banner Lockups (Widescreen Horizontal)
+* **`sys1pop_banner_dark_pure.svg`**: Unified vector banner lockup combining the CRT robot mascot blowing cyber bubbles with the transparent Nixie wordmark (`SYS 1 POP`) on a pure transparent background. Ideal for web headers and dark UI navigation bars.
 * **`sys1pop_banner_light.jpg`**: Primary horizontal banner on clean modern off-white canvas. Ideal for whitepaper headers, slide decks, light website landing pages.
 * **`sys1pop_banner_dark.jpg`**: Dark mode horizontal banner with illuminated neon cyan borders and glowing amber nixie filament on obsidian slate (`#0d1117`). Ideal for GitHub `README.md` hero banners and dark terminal documentation.
 
@@ -39,9 +40,12 @@ All canonical assets are stored in this directory (`docs/brand_kit/`):
 * **`sys1pop_emblem_primary.jpg`** (*Apex Pop*): The primary project mark. Features the CRT robot with round goggles, horizontal speed streaks, and the antenna apex bubble bursting into a comic star-pop flash. Ideal for GitHub avatar, organization logo, app icons, and social previews.
 * **`sys1pop_emblem_secondary_ambient.jpg`** (*Ambient Splash with Robot Body*): Extended composition featuring the robot's mechanical torso, analog dials, VU meters, speaker grille, and surrounding ambient bubbles. Ideal for website feature sections, "About" cards, documentation callouts, and merchandise.
 
-### 3. Logotype & Wordmark (3:2 Landscape)
-* **`sys1pop_wordmark_nixie.jpg`**: Standalone horizontal brand wordmark. Features clean geometric retro-futuristic dark navy glyphs (`SYS` and `POP`), anchored by the photorealistic glowing Nixie tube digit `1` in the center, and the tagline:
-  > `INSTANT REFLEX • MICROSECOND DECISIONS`
+### 3. Vector Mascot & Logotypes
+* **`sys1pop_robot_blowing_bubbles.svg`**: Pure scalable vector SVG of the CRT robot mascot blowing cyber bubbles with transparent background. Features clean vector paths, gradients, glow filters, and responsive dark/light adaptability. Ideal for UI headers, hero sections, and web icons.
+* **`sys1pop_wordmark_nixie.svg`**: Standalone horizontal brand wordmark vector featuring clean geometric glyphs (`SYS` and `POP`), anchored by the glowing Nixie tube digit `1` and tagline.
+* **`sys1pop_wordmark_nixie_dark.svg`**: Standalone horizontal brand wordmark vector with transparent background, optimized for dark obsidian / black surfaces with neon cyan typographic glow and amber Nixie tube digit `1`.
+* **`sys1pop_emblem_primary.svg`**: Vector shield emblem with CRT robot and round goggles.
+* **`sys1pop_wordmark_nixie.jpg`**: Raster horizontal brand wordmark on clean canvas.
 
 ---
 

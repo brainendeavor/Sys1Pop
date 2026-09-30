@@ -1,0 +1,387 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="95 53 724 647" width="100%" height="100%">
+  <defs>
+    <!-- Glow Filters -->
+    <filter id="glow-amber" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="glow-bulb" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="18" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur2" />
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Gradients -->
+    <!-- Amber Energy Beam & Starburst -->
+    <linearGradient id="grad-amber-beam" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#FFB300" stop-opacity="0" />
+      <stop offset="35%" stop-color="#FF9800" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#E65100" stop-opacity="1" />
+    </linearGradient>
+    <radialGradient id="grad-burst-amber" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF3E0" />
+      <stop offset="35%" stop-color="#FFB74D" />
+      <stop offset="70%" stop-color="#FF9800" />
+      <stop offset="100%" stop-color="#E65100" />
+    </radialGradient>
+    <radialGradient id="grad-burst-cyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#E0F7FA" />
+      <stop offset="75%" stop-color="#53D3D4" />
+      <stop offset="100%" stop-color="#00ACC1" />
+    </radialGradient>
+
+    <!-- Antenna Bulb Core -->
+    <radialGradient id="grad-bulb-core" cx="36%" cy="34%" r="66%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="25%" stop-color="#E0F7FA" />
+      <stop offset="55%" stop-color="#4DD0E1" />
+      <stop offset="85%" stop-color="#00BCD4" />
+      <stop offset="100%" stop-color="#00838F" />
+    </radialGradient>
+
+    <!-- CRT Screen & Glass -->
+    <radialGradient id="grad-screen" cx="44%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#F2FDFA" />
+      <stop offset="55%" stop-color="#DCF8F4" />
+      <stop offset="100%" stop-color="#B8ECE6" />
+    </radialGradient>
+    <linearGradient id="grad-screen-recess" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0E3339" />
+      <stop offset="100%" stop-color="#1B525A" />
+    </linearGradient>
+
+    <!-- Metallic Monitor Casing (3D Perspective) -->
+    <linearGradient id="grad-monitor-front" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C5F3F0" />
+      <stop offset="45%" stop-color="#A4DFDD" />
+      <stop offset="100%" stop-color="#7EC7C5" />
+    </linearGradient>
+    <linearGradient id="grad-monitor-top" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#A5E2DF" />
+      <stop offset="100%" stop-color="#DDFBF9" />
+    </linearGradient>
+    <linearGradient id="grad-monitor-side" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#80C8C6" />
+      <stop offset="100%" stop-color="#559FA5" />
+    </linearGradient>
+
+    <!-- Goggle Lenses -->
+    <radialGradient id="grad-lens" cx="42%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#FFE082" />
+      <stop offset="45%" stop-color="#FF9800" />
+      <stop offset="85%" stop-color="#E65100" />
+      <stop offset="100%" stop-color="#BF360C" />
+    </radialGradient>
+    <linearGradient id="grad-goggle-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1C404E" />
+      <stop offset="100%" stop-color="#0B1E28" />
+    </linearGradient>
+
+    <!-- Robot Neck Shading -->
+    <linearGradient id="grad-neck" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#64B0B4" />
+      <stop offset="45%" stop-color="#A5E2DF" />
+      <stop offset="100%" stop-color="#559EA3" />
+    </linearGradient>
+
+    <!-- Glossy Comic Bubbles -->
+    <radialGradient id="grad-bubble-cyan" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+      <stop offset="25%" stop-color="#82F2F8" stop-opacity="0.8" />
+      <stop offset="65%" stop-color="#26D9E7" stop-opacity="0.55" />
+      <stop offset="90%" stop-color="#19B5C2" stop-opacity="0.88" />
+      <stop offset="100%" stop-color="#0E8A95" stop-opacity="0.98" />
+    </radialGradient>
+    <radialGradient id="grad-bubble-amber" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#FFF9C4" stop-opacity="0.95" />
+      <stop offset="25%" stop-color="#FFD54F" stop-opacity="0.85" />
+      <stop offset="65%" stop-color="#FF9800" stop-opacity="0.6" />
+      <stop offset="90%" stop-color="#FB8C00" stop-opacity="0.92" />
+      <stop offset="100%" stop-color="#E65100" stop-opacity="0.98" />
+    </radialGradient>
+  </defs>
+
+  <!-- ==================== 1. SPEED STREAKS ==================== -->
+  <g id="speed-streaks">
+    <!-- Top Speed Line -->
+    <polygon points="145,466 345,462 345,471 165,471" fill="#0B2530" stroke="#0B2530" stroke-width="2.5" stroke-linejoin="round" />
+    <polygon points="152,466 342,463 342,470 167,470" fill="#53D3D4" opacity="0.95" />
+
+    <!-- Center Dynamic Amber Energy Beam -->
+    <polygon points="118,508 348,487 348,529" fill="#0B2530" stroke="#0B2530" stroke-width="4.5" stroke-linejoin="round" />
+    <polygon points="122,508 345,489 345,527" fill="url(#grad-amber-beam)" filter="url(#glow-amber)" />
+    <!-- Bright inner core streak -->
+    <polygon points="165,508 345,498 345,518" fill="#FFF9C4" opacity="0.95" />
+
+    <!-- Bottom Speed Line -->
+    <polygon points="145,568 345,564 345,573 165,573" fill="#0B2530" stroke="#0B2530" stroke-width="2.5" stroke-linejoin="round" />
+    <polygon points="152,568 342,565 342,572 167,572" fill="#53D3D4" opacity="0.95" />
+  </g>
+
+  <!-- ==================== 2. SIGNATURE AMBER CONTOUR HALO ==================== -->
+  <g id="signature-amber-contour" filter="url(#glow-amber)">
+    <path d="M 342 446 C 318 474 316 534 338 576 L 358 602" fill="none" stroke="#FF9800" stroke-width="14" stroke-linecap="round" opacity="0.92" />
+  </g>
+
+  <!-- ==================== 3. ROBOT NECK & COLLAR ==================== -->
+  <g id="robot-neck">
+    <!-- Lower Collar Base -->
+    <path d="M 430 634 C 430 622 580 622 580 634 L 586 664 C 586 680 424 680 424 664 Z" 
+          fill="url(#grad-neck)" stroke="#0B2530" stroke-width="7.5" stroke-linejoin="round" />
+    <path d="M 438 660 C 472 672 538 672 572 660" fill="none" stroke="#DDFBF9" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+
+    <!-- Upper Neck Segment -->
+    <rect x="450" y="608" width="110" height="28" rx="6" ry="6" 
+          fill="url(#grad-neck)" stroke="#0B2530" stroke-width="6.5" stroke-linejoin="round" />
+  </g>
+
+  <!-- ==================== 4. ROBOT HEAD & 3D CRT CASING ==================== -->
+  <g id="robot-head">
+    <!-- Side Ear Pod (Mounted on left casing) -->
+    <g id="ear-pod" transform="translate(346, 508)">
+      <rect x="-14" y="-46" width="28" height="92" rx="14" ry="14" 
+            fill="#6EB9BD" stroke="#0B2530" stroke-width="7" stroke-linejoin="round" />
+      <line x1="-12" y1="-18" x2="12" y2="-18" stroke="#0B2530" stroke-width="3.5" />
+      <line x1="-12" y1="18" x2="12" y2="18" stroke="#0B2530" stroke-width="3.5" />
+      <path d="M -6 -32 L -6 32" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.6" />
+    </g>
+
+    <!-- 3D CRT Monitor Body (Perspective Projection) -->
+    <!-- Left Beveled Side -->
+    <polygon points="346,428 402,394 402,610 346,590" 
+             fill="url(#grad-monitor-side)" stroke="#0B2530" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Top Beveled Plane -->
+    <polygon points="346,428 402,394 654,394 636,428" 
+             fill="url(#grad-monitor-top)" stroke="#0B2530" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Front Monitor Face Frame -->
+    <rect x="394" y="394" width="260" height="216" rx="28" ry="28" 
+          fill="url(#grad-monitor-front)" stroke="#0B2530" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Front Monitor Top Highlight -->
+    <path d="M 424 400 L 626 400" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" opacity="0.65" />
+
+    <!-- CRT Screen Inset Bezel Recess -->
+    <rect x="414" y="410" width="222" height="182" rx="20" ry="20" 
+          fill="url(#grad-screen-recess)" stroke="#0B2530" stroke-width="5" />
+
+    <!-- CRT Screen Glass Surface -->
+    <rect x="420" y="416" width="210" height="170" rx="16" ry="16" 
+          fill="url(#grad-screen)" />
+
+    <!-- Curved CRT Glass Reflection Highlight -->
+    <path d="M 428 422 L 558 422 A 14 14 0 0 1 572 436 L 428 522 Z" 
+          fill="#FFFFFF" opacity="0.25" />
+
+    <!-- ==================== 5. NERD GOGGLES & EYES ==================== -->
+    <g id="goggles">
+      <!-- Goggle Bridge (Arched between eyepieces) -->
+      <path d="M 524 486 Q 540 481 556 486" fill="none" stroke="#0B2530" stroke-width="9" stroke-linecap="round" />
+      <path d="M 526 486 Q 540 481 554 486" fill="none" stroke="#53D3D4" stroke-width="3.5" stroke-linecap="round" />
+
+      <!-- Left Goggle Eyepiece at (480, 486) - Forefront Perspective (Large) -->
+      <g id="left-goggle" transform="translate(480, 486)">
+        <circle cx="0" cy="0" r="56" fill="url(#grad-goggle-rim)" stroke="#0B2530" stroke-width="8" />
+        <circle cx="0" cy="0" r="47" fill="none" stroke="#53D3D4" stroke-width="4.5" />
+        <circle cx="0" cy="0" r="42" fill="url(#grad-lens)" stroke="#0B2530" stroke-width="3" />
+        <circle cx="7" cy="7" r="20" fill="#0B1A24" />
+        <circle cx="-7" cy="-8" r="7" fill="#FFFFFF" />
+        <circle cx="16" cy="15" r="3.2" fill="#FFFFFF" opacity="0.85" />
+      </g>
+
+      <!-- Right Goggle Eyepiece at (592, 486) - Receding Perspective -->
+      <g id="right-goggle" transform="translate(592, 486)">
+        <circle cx="0" cy="0" r="46" fill="url(#grad-goggle-rim)" stroke="#0B2530" stroke-width="7.5" />
+        <circle cx="0" cy="0" r="38" fill="none" stroke="#53D3D4" stroke-width="4" />
+        <circle cx="0" cy="0" r="34" fill="url(#grad-lens)" stroke="#0B2530" stroke-width="2.8" />
+        <circle cx="5" cy="5" r="16" fill="#0B1A24" />
+        <circle cx="-6" cy="-7" r="5.5" fill="#FFFFFF" />
+        <circle cx="13" cy="12" r="2.6" fill="#FFFFFF" opacity="0.85" />
+      </g>
+    </g>
+
+    <!-- ==================== 6. MOUTH & BUBBLE BLOWING PIPE ==================== -->
+    <g id="mouth-and-pipe">
+      <!-- Mouth Port on Face -->
+      <ellipse cx="536" cy="546" rx="14" ry="12" fill="none" stroke="#53D3D4" stroke-width="2.8" />
+      <!-- Mouth Interior Opening -->
+      <ellipse cx="536" cy="546" rx="11" ry="9" fill="#0B2028" stroke="#0B2530" stroke-width="4" />
+
+      <!-- Bubble Wand / Pipe Tube -->
+      <polygon points="540,543 613,554 611,563 538,551" 
+               fill="#6EB9BD" stroke="#0B2530" stroke-width="4" stroke-linejoin="round" />
+      <line x1="542" y1="545" x2="610" y2="556" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.75" />
+      
+      <!-- Wand Tip Collar -->
+      <ellipse cx="612" cy="558" rx="4" ry="6.5" transform="rotate(10 612 558)" 
+               fill="#4E999E" stroke="#0B2530" stroke-width="3" />
+
+      <!-- Forming Amber Bubble at Pipe Tip (618, 558) -->
+      <g id="forming-bubble">
+        <circle cx="618" cy="558" r="15" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3" />
+        <path d="M 608 550 A 11 11 0 0 1 624 546" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" opacity="0.95" />
+        <circle cx="624" cy="564" r="2.8" fill="#FFFFFF" opacity="0.6" />
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== 7. FLOATING BUBBLE STREAM ==================== -->
+  <g id="bubble-stream">
+    <!-- Bubble 2 (Small Cyan, rising from tip) -->
+    <g transform="translate(650, 540)">
+      <circle cx="0" cy="0" r="15" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2.8" />
+      <path d="M -10 -7 A 11 11 0 0 1 5 -12" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.95" />
+      <circle cx="5" cy="6" r="2.5" fill="#FFFFFF" opacity="0.55" />
+    </g>
+
+    <!-- Bubble 3 (Tiny Cyan Bubble) -->
+    <g transform="translate(684, 518)">
+      <circle cx="0" cy="0" r="12" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2.5" />
+      <path d="M -8 -6 A 9 9 0 0 1 4 -9" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.92" />
+    </g>
+
+    <!-- Bubble 4 (Amber Bubble, ascending) -->
+    <g transform="translate(738, 500)">
+      <circle cx="0" cy="0" r="17" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3" />
+      <path d="M -11 -8 A 12 12 0 0 1 6 -13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" opacity="0.95" />
+      <circle cx="6" cy="7" r="2.5" fill="#FFFFFF" opacity="0.6" />
+    </g>
+
+    <!-- Bubble 5 (Medium Cyan Bubble) -->
+    <g transform="translate(686, 452)">
+      <circle cx="0" cy="0" r="24" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="3.2" />
+      <path d="M -16 -11 A 18 18 0 0 1 8 -18" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" opacity="0.95" />
+      <circle cx="9" cy="10" r="3.5" fill="#FFFFFF" opacity="0.55" />
+    </g>
+
+    <!-- Bubble 6 (Medium Amber Bubble, rising left) -->
+    <g transform="translate(664, 366)">
+      <circle cx="0" cy="0" r="30" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3.5" />
+      <path d="M -20 -13 A 22 22 0 0 1 10 -22" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" opacity="0.95" />
+      <circle cx="12" cy="13" r="4.2" fill="#FFFFFF" opacity="0.65" />
+    </g>
+
+    <!-- Bubble 7 (LARGE HERO CYAN BUBBLE) -->
+    <g transform="translate(748, 396)">
+      <circle cx="0" cy="0" r="38" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="4" />
+      <path d="M -25 -17 A 28 28 0 0 1 13 -27" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" opacity="0.95" />
+      <circle cx="15" cy="17" r="6" fill="#FFFFFF" opacity="0.6" />
+      <ellipse cx="-4" cy="19" rx="17" ry="7" fill="#82F2F8" opacity="0.45" />
+    </g>
+
+    <!-- Bubble 8 (Upper Amber Bubble) -->
+    <g transform="translate(700, 296)">
+      <circle cx="0" cy="0" r="22" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3" />
+      <path d="M -14 -9 A 16 16 0 0 1 7 -16" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" opacity="0.92" />
+      <circle cx="9" cy="9" r="3" fill="#FFFFFF" opacity="0.55" />
+    </g>
+
+    <!-- Ambient Micro Bubbles & Details -->
+    <circle cx="638" cy="328" r="10" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2" />
+    <circle cx="722" cy="322" r="9" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2" />
+    <circle cx="776" cy="448" r="11" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="2.2" />
+    <circle cx="784" cy="424" r="13" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2.5" />
+
+    <!-- Radiating Sparks -->
+    <circle cx="630" cy="504" r="3.5" fill="#53D3D4" stroke="#0B2530" stroke-width="1.2" />
+    <circle cx="712" cy="546" r="3" fill="#FFA726" stroke="#0B2530" stroke-width="1" />
+    <circle cx="770" cy="354" r="3.5" fill="#53D3D4" stroke="#0B2530" stroke-width="1.2" />
+    <circle cx="688" cy="264" r="2.5" fill="#FFB74D" />
+  </g>
+
+  <!-- ==================== 8. ANTENNA & APEX POP STARBURST ==================== -->
+  <g id="antenna-assembly">
+    <!-- Antenna Base Mounted on Top Plane of Monitor (505, 394) -->
+    <path d="M 486 394 C 486 380 524 380 524 394 Z" 
+          fill="#6EB9BD" stroke="#0B2530" stroke-width="5" stroke-linejoin="round" />
+
+    <!-- Ribbed Antenna Stem (Accordion Sections) -->
+    <rect x="497" y="352" width="16" height="26" fill="#84CAC8" stroke="#0B2530" stroke-width="4.5" />
+    <ellipse cx="505" cy="352" rx="11" ry="4.5" fill="#A5E2DF" stroke="#0B2530" stroke-width="3" />
+
+    <rect x="499" y="320" width="12" height="32" fill="#84CAC8" stroke="#0B2530" stroke-width="4" />
+    <ellipse cx="505" cy="320" rx="9" ry="4" fill="#A5E2DF" stroke="#0B2530" stroke-width="3" />
+
+    <!-- Top Stem Collar Bead -->
+    <circle cx="505" cy="310" r="9" fill="#6EB9BD" stroke="#0B2530" stroke-width="3.5" />
+
+    <!-- ==================== APEX COMIC STARBURST EXPLOSION ==================== -->
+    <g id="apex-pop-burst" transform="translate(505, 268)">
+      <!-- Outer Amber Comic Starburst (Alternating Sharp Rays) -->
+      <polygon points="
+        0,-154   26,-82   84,-126  56,-50   132,-50  76,0
+        140,50   66,56    90,120   30,76    0,144    -30,76
+        -90,120  -66,56   -140,50  -76,0    -132,-50 -56,-50
+        -84,-126 -26,-82"
+        fill="url(#grad-burst-amber)" stroke="#0C1A24" stroke-width="5.5" stroke-linejoin="miter" filter="url(#glow-amber)" />
+
+      <!-- Inner Electric Cyan Flash Burst (Aligned Ray Cores) -->
+      <polygon points="
+        0,-112   18,-58   62,-92   40,-36   98,-36   54,0
+        104,36   48,40    66,88    22,54    0,104    -22,54
+        -66,88   -48,40   -104,36  -54,0    -98,-36  -40,-36
+        -62,-92  -18,-58"
+        fill="url(#grad-burst-cyan)" stroke="#0B2530" stroke-width="3.5" stroke-linejoin="miter" />
+
+      <!-- Apex Glowing Cyan Bulb -->
+      <circle cx="0" cy="0" r="48" fill="url(#grad-bulb-core)" stroke="#0C1A24" stroke-width="5.5" filter="url(#glow-bulb)" />
+
+      <!-- Curved Specular Reflection on Upper-Left Bulb Glass -->
+      <ellipse cx="-16" cy="-18" rx="14" ry="8" transform="rotate(-30 -16 -18)" fill="#FFFFFF" opacity="0.95" />
+      <path d="M -32 10 A 40 40 0 0 0 -4 36" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" opacity="0.65" />
+
+      <!-- Jagged Comic Crack on Right Hemisphere -->
+      <path d="M 18 -42 L 8 -24 L 33 -8 L 14 14 L 31 38" 
+            fill="none" stroke="#0C1A24" stroke-width="5" stroke-linecap="round" stroke-linejoin="bevel" />
+    </g>
+
+    <!-- ==================== FLYING SPLASH DROPLETS ==================== -->
+    <g id="splash-droplets">
+      <!-- Droplet 1 (Top Center) -->
+      <path d="M 505 76 C 500 87 495 95 495 101 A 10 10 0 0 0 515 101 C 515 95 510 87 505 76 Z" 
+            fill="#26D9E7" stroke="#0B2530" stroke-width="2.5" />
+
+      <!-- Droplet 2 (Top Right) -->
+      <path d="M 618 124 C 618 134 612 140 616 146 A 8 8 0 0 0 630 140 C 630 134 626 128 618 124 Z" 
+            fill="#26D9E7" stroke="#0B2530" stroke-width="2.5" />
+
+      <!-- Droplet 3 (Top Left) -->
+      <path d="M 392 130 C 390 140 395 146 391 152 A 8 8 0 0 0 405 154 C 407 148 404 140 392 130 Z" 
+            fill="#26D9E7" stroke="#0B2530" stroke-width="2.5" />
+
+      <!-- Droplet 4 (Far Top-Right Angled Drop) -->
+      <ellipse cx="644" cy="172" rx="6" ry="9" transform="rotate(35 644 172)" 
+               fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 5 (Far Top-Left Angled Drop) -->
+      <ellipse cx="366" cy="172" rx="6" ry="9" transform="rotate(-35 366 172)" 
+               fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 6 (Mid-Right Splash Drop) -->
+      <circle cx="674" cy="218" r="6" fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 7 (Mid-Left Splash Drop) -->
+      <circle cx="336" cy="218" r="6" fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 8 (Lower-Left Splash Drop) -->
+      <circle cx="326" cy="270" r="5" fill="#26D9E7" stroke="#0B2530" stroke-width="1.8" />
+
+      <!-- Droplet 9 (Lower-Right Splash Drop) -->
+      <circle cx="684" cy="270" r="5" fill="#26D9E7" stroke="#0B2530" stroke-width="1.8" />
+
+      <!-- Amber Filament Sparks -->
+      <circle cx="452" cy="186" r="4.5" fill="#FFA726" stroke="#0B2530" stroke-width="1.5" />
+      <circle cx="558" cy="186" r="4.5" fill="#FFA726" stroke="#0B2530" stroke-width="1.5" />
+    </g>
+  </g>
+</svg>

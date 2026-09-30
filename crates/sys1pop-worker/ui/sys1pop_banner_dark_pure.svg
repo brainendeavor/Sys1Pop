@@ -1,0 +1,705 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="72 29 1920 760" width="100%" height="100%">
+  <defs>
+<!-- Glow Filters -->
+    <filter id="glow-amber" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="glow-bulb" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="8" result="blur1" />
+      <feGaussianBlur stdDeviation="18" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur2" />
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Gradients -->
+    <!-- Amber Energy Beam & Starburst -->
+    <linearGradient id="grad-amber-beam" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#FFB300" stop-opacity="0" />
+      <stop offset="35%" stop-color="#FF9800" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#E65100" stop-opacity="1" />
+    </linearGradient>
+    <radialGradient id="grad-burst-amber" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF3E0" />
+      <stop offset="35%" stop-color="#FFB74D" />
+      <stop offset="70%" stop-color="#FF9800" />
+      <stop offset="100%" stop-color="#E65100" />
+    </radialGradient>
+    <radialGradient id="grad-burst-cyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#E0F7FA" />
+      <stop offset="75%" stop-color="#53D3D4" />
+      <stop offset="100%" stop-color="#00ACC1" />
+    </radialGradient>
+
+    <!-- Antenna Bulb Core -->
+    <radialGradient id="grad-bulb-core" cx="36%" cy="34%" r="66%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="25%" stop-color="#E0F7FA" />
+      <stop offset="55%" stop-color="#4DD0E1" />
+      <stop offset="85%" stop-color="#00BCD4" />
+      <stop offset="100%" stop-color="#00838F" />
+    </radialGradient>
+
+    <!-- CRT Screen & Glass -->
+    <radialGradient id="grad-screen" cx="44%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#F2FDFA" />
+      <stop offset="55%" stop-color="#DCF8F4" />
+      <stop offset="100%" stop-color="#B8ECE6" />
+    </radialGradient>
+    <linearGradient id="grad-screen-recess" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0E3339" />
+      <stop offset="100%" stop-color="#1B525A" />
+    </linearGradient>
+
+    <!-- Metallic Monitor Casing (3D Perspective) -->
+    <linearGradient id="grad-monitor-front" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C5F3F0" />
+      <stop offset="45%" stop-color="#A4DFDD" />
+      <stop offset="100%" stop-color="#7EC7C5" />
+    </linearGradient>
+    <linearGradient id="grad-monitor-top" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#A5E2DF" />
+      <stop offset="100%" stop-color="#DDFBF9" />
+    </linearGradient>
+    <linearGradient id="grad-monitor-side" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#80C8C6" />
+      <stop offset="100%" stop-color="#559FA5" />
+    </linearGradient>
+
+    <!-- Goggle Lenses -->
+    <radialGradient id="grad-lens" cx="42%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#FFE082" />
+      <stop offset="45%" stop-color="#FF9800" />
+      <stop offset="85%" stop-color="#E65100" />
+      <stop offset="100%" stop-color="#BF360C" />
+    </radialGradient>
+    <linearGradient id="grad-goggle-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1C404E" />
+      <stop offset="100%" stop-color="#0B1E28" />
+    </linearGradient>
+
+    <!-- Robot Neck Shading -->
+    <linearGradient id="grad-neck" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#64B0B4" />
+      <stop offset="45%" stop-color="#A5E2DF" />
+      <stop offset="100%" stop-color="#559EA3" />
+    </linearGradient>
+
+    <!-- Glossy Comic Bubbles -->
+    <radialGradient id="grad-bubble-cyan" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+      <stop offset="25%" stop-color="#82F2F8" stop-opacity="0.8" />
+      <stop offset="65%" stop-color="#26D9E7" stop-opacity="0.55" />
+      <stop offset="90%" stop-color="#19B5C2" stop-opacity="0.88" />
+      <stop offset="100%" stop-color="#0E8A95" stop-opacity="0.98" />
+    </radialGradient>
+    <radialGradient id="grad-bubble-amber" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#FFF9C4" stop-opacity="0.95" />
+      <stop offset="25%" stop-color="#FFD54F" stop-opacity="0.85" />
+      <stop offset="65%" stop-color="#FF9800" stop-opacity="0.6" />
+      <stop offset="90%" stop-color="#FB8C00" stop-opacity="0.92" />
+      <stop offset="100%" stop-color="#E65100" stop-opacity="0.98" />
+    </radialGradient>
+
+<!-- Cyan Neon Glow Filters for Typography -->
+    <filter id="cyan-glow-bloom" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="14" result="blur" />
+    </filter>
+    <filter id="cyan-glow-wide" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6.5" result="blur" />
+    </filter>
+    <filter id="cyan-glow-tight" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="2.2" result="blur" />
+    </filter>
+
+    <!-- Nixie Glow Filters -->
+    <filter id="nixie-glow-wide" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="30" result="blur" />
+    </filter>
+    <filter id="nixie-glow-medium" x="-45%" y="-45%" width="190%" height="190%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+    </filter>
+    <filter id="nixie-glow-tight" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+    </filter>
+    <filter id="ambient-halo-dark" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="46" />
+    </filter>
+
+    <!-- Ambient Amber Halos -->
+    <radialGradient id="grad-ambient-amber" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF8A00" stop-opacity="0.9" />
+      <stop offset="28%" stop-color="#FF6A00" stop-opacity="0.55" />
+      <stop offset="65%" stop-color="#FF9E00" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#FF9E00" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Subtle Cyan Ambient Floor Glow for Letters -->
+    <radialGradient id="grad-ambient-cyan-sys" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#26D9E7" stop-opacity="0.18" />
+      <stop offset="55%" stop-color="#26D9E7" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#26D9E7" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="grad-ambient-cyan-pop" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#26D9E7" stop-opacity="0.18" />
+      <stop offset="55%" stop-color="#26D9E7" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#26D9E7" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Letter Body Fill -->
+    <linearGradient id="grad-letter-body" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#08141C" />
+      <stop offset="100%" stop-color="#04090E" />
+    </linearGradient>
+
+    <!-- Stroke Gradients: S2 transitioning to amber near Nixie -->
+    <linearGradient id="stroke-cyan-to-amber-s2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#26D9E7" />
+      <stop offset="60%" stop-color="#26D9E7" />
+      <stop offset="85%" stop-color="#55D4B2" />
+      <stop offset="100%" stop-color="#FFA726" />
+    </linearGradient>
+    <linearGradient id="stroke-cyan-to-amber-s2-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00E5FF" />
+      <stop offset="60%" stop-color="#00E5FF" />
+      <stop offset="85%" stop-color="#1DE9B6" />
+      <stop offset="100%" stop-color="#FF9100" />
+    </linearGradient>
+
+    <!-- Stroke Gradients: P1 transitioning from amber to cyan -->
+    <linearGradient id="stroke-amber-to-cyan-p1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFA726" />
+      <stop offset="15%" stop-color="#55D4B2" />
+      <stop offset="40%" stop-color="#26D9E7" />
+      <stop offset="100%" stop-color="#26D9E7" />
+    </linearGradient>
+    <linearGradient id="stroke-amber-to-cyan-p1-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF9100" />
+      <stop offset="15%" stop-color="#1DE9B6" />
+      <stop offset="40%" stop-color="#00E5FF" />
+      <stop offset="100%" stop-color="#00E5FF" />
+    </linearGradient>
+
+    <!-- Glass 3D Cylinder Shading (Dark Background Optimized) -->
+    <linearGradient id="grad-glass-body-dark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1A2834" stop-opacity="0.65" />
+      <stop offset="10%" stop-color="#2B4050" stop-opacity="0.22" />
+      <stop offset="30%" stop-color="#FFFFFF" stop-opacity="0.06" />
+      <stop offset="70%" stop-color="#FFFFFF" stop-opacity="0.04" />
+      <stop offset="90%" stop-color="#2B4050" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#1A2834" stop-opacity="0.65" />
+    </linearGradient>
+
+    <!-- Top Dome Dark Refraction / Getter -->
+    <radialGradient id="grad-glass-top-dark" cx="50%" cy="20%" r="50%">
+      <stop offset="0%" stop-color="#3A5060" stop-opacity="0.5" />
+      <stop offset="60%" stop-color="#16222C" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#0E161C" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Metallic Base Pin Gradient -->
+    <linearGradient id="grad-pin-dark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="35%" stop-color="#CBD5E1" />
+      <stop offset="70%" stop-color="#64748B" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+
+    <!-- Anode Screen Internal Glow Backing -->
+    <radialGradient id="grad-anode-lit-dark" cx="50%" cy="44%" r="55%">
+      <stop offset="0%" stop-color="#E65100" stop-opacity="0.98" />
+      <stop offset="25%" stop-color="#BF360C" stop-opacity="0.90" />
+      <stop offset="55%" stop-color="#3E2723" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#140B07" />
+    </radialGradient>
+
+    <!-- Anode Diamond Mesh Pattern -->
+    <pattern id="pattern-mesh" width="3.6" height="3.6" patternUnits="userSpaceOnUse">
+      <path d="M 0 0 L 3.6 3.6 M 3.6 0 L 0 3.6" fill="none" stroke="#8D5B2E" stroke-width="0.6" opacity="0.55" />
+    </pattern>
+  </defs>
+
+  <!-- ==================== ROBOT MASCOT ==================== -->
+  <g id="robot-mascot">
+<!-- ==================== 1. SPEED STREAKS ==================== -->
+  <g id="speed-streaks">
+    <!-- Top Speed Line -->
+    <polygon points="145,466 345,462 345,471 165,471" fill="#0B2530" stroke="#0B2530" stroke-width="2.5" stroke-linejoin="round" />
+    <polygon points="152,466 342,463 342,470 167,470" fill="#53D3D4" opacity="0.95" />
+
+    <!-- Center Dynamic Amber Energy Beam -->
+    <polygon points="118,508 348,487 348,529" fill="#0B2530" stroke="#0B2530" stroke-width="4.5" stroke-linejoin="round" />
+    <polygon points="122,508 345,489 345,527" fill="url(#grad-amber-beam)" filter="url(#glow-amber)" />
+    <!-- Bright inner core streak -->
+    <polygon points="165,508 345,498 345,518" fill="#FFF9C4" opacity="0.95" />
+
+    <!-- Bottom Speed Line -->
+    <polygon points="145,568 345,564 345,573 165,573" fill="#0B2530" stroke="#0B2530" stroke-width="2.5" stroke-linejoin="round" />
+    <polygon points="152,568 342,565 342,572 167,572" fill="#53D3D4" opacity="0.95" />
+  </g>
+
+  <!-- ==================== 2. SIGNATURE AMBER CONTOUR HALO ==================== -->
+  <g id="signature-amber-contour" filter="url(#glow-amber)">
+    <path d="M 342 446 C 318 474 316 534 338 576 L 358 602" fill="none" stroke="#FF9800" stroke-width="14" stroke-linecap="round" opacity="0.92" />
+  </g>
+
+  <!-- ==================== 3. ROBOT NECK & COLLAR ==================== -->
+  <g id="robot-neck">
+    <!-- Lower Collar Base -->
+    <path d="M 430 634 C 430 622 580 622 580 634 L 586 664 C 586 680 424 680 424 664 Z" 
+          fill="url(#grad-neck)" stroke="#0B2530" stroke-width="7.5" stroke-linejoin="round" />
+    <path d="M 438 660 C 472 672 538 672 572 660" fill="none" stroke="#DDFBF9" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+
+    <!-- Upper Neck Segment -->
+    <rect x="450" y="608" width="110" height="28" rx="6" ry="6" 
+          fill="url(#grad-neck)" stroke="#0B2530" stroke-width="6.5" stroke-linejoin="round" />
+  </g>
+
+  <!-- ==================== 4. ROBOT HEAD & 3D CRT CASING ==================== -->
+  <g id="robot-head">
+    <!-- Side Ear Pod (Mounted on left casing) -->
+    <g id="ear-pod" transform="translate(346, 508)">
+      <rect x="-14" y="-46" width="28" height="92" rx="14" ry="14" 
+            fill="#6EB9BD" stroke="#0B2530" stroke-width="7" stroke-linejoin="round" />
+      <line x1="-12" y1="-18" x2="12" y2="-18" stroke="#0B2530" stroke-width="3.5" />
+      <line x1="-12" y1="18" x2="12" y2="18" stroke="#0B2530" stroke-width="3.5" />
+      <path d="M -6 -32 L -6 32" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.6" />
+    </g>
+
+    <!-- 3D CRT Monitor Body (Perspective Projection) -->
+    <!-- Left Beveled Side -->
+    <polygon points="346,428 402,394 402,610 346,590" 
+             fill="url(#grad-monitor-side)" stroke="#0B2530" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Top Beveled Plane -->
+    <polygon points="346,428 402,394 654,394 636,428" 
+             fill="url(#grad-monitor-top)" stroke="#0B2530" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Front Monitor Face Frame -->
+    <rect x="394" y="394" width="260" height="216" rx="28" ry="28" 
+          fill="url(#grad-monitor-front)" stroke="#0B2530" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Front Monitor Top Highlight -->
+    <path d="M 424 400 L 626 400" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" opacity="0.65" />
+
+    <!-- CRT Screen Inset Bezel Recess -->
+    <rect x="414" y="410" width="222" height="182" rx="20" ry="20" 
+          fill="url(#grad-screen-recess)" stroke="#0B2530" stroke-width="5" />
+
+    <!-- CRT Screen Glass Surface -->
+    <rect x="420" y="416" width="210" height="170" rx="16" ry="16" 
+          fill="url(#grad-screen)" />
+
+    <!-- Curved CRT Glass Reflection Highlight -->
+    <path d="M 428 422 L 558 422 A 14 14 0 0 1 572 436 L 428 522 Z" 
+          fill="#FFFFFF" opacity="0.25" />
+
+    <!-- ==================== 5. NERD GOGGLES & EYES ==================== -->
+    <g id="goggles">
+      <!-- Goggle Bridge (Arched between eyepieces) -->
+      <path d="M 524 486 Q 540 481 556 486" fill="none" stroke="#0B2530" stroke-width="9" stroke-linecap="round" />
+      <path d="M 526 486 Q 540 481 554 486" fill="none" stroke="#53D3D4" stroke-width="3.5" stroke-linecap="round" />
+
+      <!-- Left Goggle Eyepiece at (480, 486) - Forefront Perspective (Large) -->
+      <g id="left-goggle" transform="translate(480, 486)">
+        <circle cx="0" cy="0" r="56" fill="url(#grad-goggle-rim)" stroke="#0B2530" stroke-width="8" />
+        <circle cx="0" cy="0" r="47" fill="none" stroke="#53D3D4" stroke-width="4.5" />
+        <circle cx="0" cy="0" r="42" fill="url(#grad-lens)" stroke="#0B2530" stroke-width="3" />
+        <circle cx="7" cy="7" r="20" fill="#0B1A24" />
+        <circle cx="-7" cy="-8" r="7" fill="#FFFFFF" />
+        <circle cx="16" cy="15" r="3.2" fill="#FFFFFF" opacity="0.85" />
+      </g>
+
+      <!-- Right Goggle Eyepiece at (592, 486) - Receding Perspective -->
+      <g id="right-goggle" transform="translate(592, 486)">
+        <circle cx="0" cy="0" r="46" fill="url(#grad-goggle-rim)" stroke="#0B2530" stroke-width="7.5" />
+        <circle cx="0" cy="0" r="38" fill="none" stroke="#53D3D4" stroke-width="4" />
+        <circle cx="0" cy="0" r="34" fill="url(#grad-lens)" stroke="#0B2530" stroke-width="2.8" />
+        <circle cx="5" cy="5" r="16" fill="#0B1A24" />
+        <circle cx="-6" cy="-7" r="5.5" fill="#FFFFFF" />
+        <circle cx="13" cy="12" r="2.6" fill="#FFFFFF" opacity="0.85" />
+      </g>
+    </g>
+
+    <!-- ==================== 6. MOUTH & BUBBLE BLOWING PIPE ==================== -->
+    <g id="mouth-and-pipe">
+      <!-- Mouth Port on Face -->
+      <ellipse cx="536" cy="546" rx="14" ry="12" fill="none" stroke="#53D3D4" stroke-width="2.8" />
+      <ellipse cx="536" cy="546" rx="11" ry="9" fill="#0B2028" stroke="#0B2530" stroke-width="4" />
+
+      <!-- Bubble Wand / Pipe Tube -->
+      <polygon points="540,543 613,554 611,563 538,551" 
+               fill="#6EB9BD" stroke="#0B2530" stroke-width="4" stroke-linejoin="round" />
+      <line x1="542" y1="545" x2="610" y2="556" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.75" />
+      
+      <!-- Wand Tip Collar -->
+      <ellipse cx="612" cy="558" rx="4" ry="6.5" transform="rotate(10 612 558)" 
+               fill="#4E999E" stroke="#0B2530" stroke-width="3" />
+
+      <!-- Forming Amber Bubble at Pipe Tip (618, 558) -->
+      <g id="forming-bubble">
+        <circle cx="618" cy="558" r="15" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3" />
+        <path d="M 608 550 A 11 11 0 0 1 624 546" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" opacity="0.95" />
+        <circle cx="624" cy="564" r="2.8" fill="#FFFFFF" opacity="0.6" />
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== 7. FLOATING BUBBLE STREAM ==================== -->
+  <g id="bubble-stream">
+    <!-- Bubble 2 (Small Cyan, rising from tip) -->
+    <g transform="translate(650, 540)">
+      <circle cx="0" cy="0" r="15" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2.8" />
+      <path d="M -10 -7 A 11 11 0 0 1 5 -12" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.95" />
+      <circle cx="5" cy="6" r="2.5" fill="#FFFFFF" opacity="0.55" />
+    </g>
+
+    <!-- Bubble 3 (Tiny Cyan Bubble) -->
+    <g transform="translate(684, 518)">
+      <circle cx="0" cy="0" r="12" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2.5" />
+      <path d="M -8 -6 A 9 9 0 0 1 4 -9" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.92" />
+    </g>
+
+    <!-- Bubble 4 (Amber Bubble, ascending) -->
+    <g transform="translate(738, 500)">
+      <circle cx="0" cy="0" r="17" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3" />
+      <path d="M -11 -8 A 12 12 0 0 1 6 -13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" opacity="0.95" />
+      <circle cx="6" cy="7" r="2.5" fill="#FFFFFF" opacity="0.6" />
+    </g>
+
+    <!-- Bubble 5 (Medium Cyan Bubble) -->
+    <g transform="translate(686, 452)">
+      <circle cx="0" cy="0" r="24" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="3.2" />
+      <path d="M -16 -11 A 18 18 0 0 1 8 -18" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" opacity="0.95" />
+      <circle cx="9" cy="10" r="3.5" fill="#FFFFFF" opacity="0.55" />
+    </g>
+
+    <!-- Bubble 6 (Medium Amber Bubble, rising left) -->
+    <g transform="translate(664, 366)">
+      <circle cx="0" cy="0" r="30" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3.5" />
+      <path d="M -20 -13 A 22 22 0 0 1 10 -22" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" opacity="0.95" />
+      <circle cx="12" cy="13" r="4.2" fill="#FFFFFF" opacity="0.65" />
+    </g>
+
+    <!-- Bubble 7 (LARGE HERO CYAN BUBBLE) -->
+    <g transform="translate(748, 396)">
+      <circle cx="0" cy="0" r="38" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="4" />
+      <path d="M -25 -17 A 28 28 0 0 1 13 -27" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" opacity="0.95" />
+      <circle cx="15" cy="17" r="6" fill="#FFFFFF" opacity="0.6" />
+      <ellipse cx="-4" cy="19" rx="17" ry="7" fill="#82F2F8" opacity="0.45" />
+    </g>
+
+    <!-- Bubble 8 (Upper Amber Bubble) -->
+    <g transform="translate(700, 296)">
+      <circle cx="0" cy="0" r="22" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="3" />
+      <path d="M -14 -9 A 16 16 0 0 1 7 -16" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" opacity="0.92" />
+      <circle cx="9" cy="9" r="3" fill="#FFFFFF" opacity="0.55" />
+    </g>
+
+    <!-- Ambient Micro Bubbles & Details -->
+    <circle cx="638" cy="328" r="10" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2" />
+    <circle cx="722" cy="322" r="9" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2" />
+    <circle cx="776" cy="448" r="11" fill="url(#grad-bubble-amber)" stroke="#0B2530" stroke-width="2.2" />
+    <circle cx="784" cy="424" r="13" fill="url(#grad-bubble-cyan)" stroke="#0B2530" stroke-width="2.5" />
+
+    <!-- Radiating Sparks -->
+    <circle cx="630" cy="504" r="3.5" fill="#53D3D4" stroke="#0B2530" stroke-width="1.2" />
+    <circle cx="712" cy="546" r="3" fill="#FFA726" stroke="#0B2530" stroke-width="1" />
+    <circle cx="770" cy="354" r="3.5" fill="#53D3D4" stroke="#0B2530" stroke-width="1.2" />
+    <circle cx="688" cy="264" r="2.5" fill="#FFB74D" />
+  </g>
+
+  <!-- ==================== 8. ANTENNA & APEX POP STARBURST ==================== -->
+  <g id="antenna-assembly">
+    <!-- Antenna Base Mounted on Top Plane of Monitor (505, 394) -->
+    <path d="M 486 394 C 486 380 524 380 524 394 Z" 
+          fill="#6EB9BD" stroke="#0B2530" stroke-width="5" stroke-linejoin="round" />
+
+    <!-- Ribbed Antenna Stem (Accordion Sections) -->
+    <rect x="497" y="352" width="16" height="26" fill="#84CAC8" stroke="#0B2530" stroke-width="4.5" />
+    <ellipse cx="505" cy="352" rx="11" ry="4.5" fill="#A5E2DF" stroke="#0B2530" stroke-width="3" />
+
+    <rect x="499" y="320" width="12" height="32" fill="#84CAC8" stroke="#0B2530" stroke-width="4" />
+    <ellipse cx="505" cy="320" rx="9" ry="4" fill="#A5E2DF" stroke="#0B2530" stroke-width="3" />
+
+    <!-- Top Stem Collar Bead -->
+    <circle cx="505" cy="310" r="9" fill="#6EB9BD" stroke="#0B2530" stroke-width="3.5" />
+
+    <!-- ==================== APEX COMIC STARBURST EXPLOSION ==================== -->
+    <g id="apex-pop-burst" transform="translate(505, 268)">
+      <!-- Outer Amber Comic Starburst (Alternating Sharp Rays) -->
+      <polygon points="
+        0,-154   26,-82   84,-126  56,-50   132,-50  76,0
+        140,50   66,56    90,120   30,76    0,144    -30,76
+        -90,120  -66,56   -140,50  -76,0    -132,-50 -56,-50
+        -84,-126 -26,-82"
+        fill="url(#grad-burst-amber)" stroke="#0C1A24" stroke-width="5.5" stroke-linejoin="miter" filter="url(#glow-amber)" />
+
+      <!-- Inner Electric Cyan Flash Burst (Aligned Ray Cores) -->
+      <polygon points="
+        0,-112   18,-58   62,-92   40,-36   98,-36   54,0
+        104,36   48,40    66,88    22,54    0,104    -22,54
+        -66,88   -48,40   -104,36  -54,0    -98,-36  -40,-36
+        -62,-92  -18,-58"
+        fill="url(#grad-burst-cyan)" stroke="#0B2530" stroke-width="3.5" stroke-linejoin="miter" />
+
+      <!-- Apex Glowing Cyan Bulb -->
+      <circle cx="0" cy="0" r="48" fill="url(#grad-bulb-core)" stroke="#0C1A24" stroke-width="5.5" filter="url(#glow-bulb)" />
+
+      <!-- Curved Specular Reflection on Upper-Left Bulb Glass -->
+      <ellipse cx="-16" cy="-18" rx="14" ry="8" transform="rotate(-30 -16 -18)" fill="#FFFFFF" opacity="0.95" />
+      <path d="M -32 10 A 40 40 0 0 0 -4 36" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" opacity="0.65" />
+
+      <!-- Jagged Comic Crack on Right Hemisphere -->
+      <path d="M 18 -42 L 8 -24 L 33 -8 L 14 14 L 31 38" 
+            fill="none" stroke="#0C1A24" stroke-width="5" stroke-linecap="round" stroke-linejoin="bevel" />
+    </g>
+
+    <!-- ==================== FLYING SPLASH DROPLETS ==================== -->
+    <g id="splash-droplets">
+      <!-- Droplet 1 (Top Center) -->
+      <path d="M 505 76 C 500 87 495 95 495 101 A 10 10 0 0 0 515 101 C 515 95 510 87 505 76 Z" 
+            fill="#26D9E7" stroke="#0B2530" stroke-width="2.5" />
+
+      <!-- Droplet 2 (Top Right) -->
+      <path d="M 618 124 C 618 134 612 140 616 146 A 8 8 0 0 0 630 140 C 630 134 626 128 618 124 Z" 
+            fill="#26D9E7" stroke="#0B2530" stroke-width="2.5" />
+
+      <!-- Droplet 3 (Top Left) -->
+      <path d="M 392 130 C 390 140 395 146 391 152 A 8 8 0 0 0 405 154 C 407 148 404 140 392 130 Z" 
+            fill="#26D9E7" stroke="#0B2530" stroke-width="2.5" />
+
+      <!-- Droplet 4 (Far Top-Right Angled Drop) -->
+      <ellipse cx="644" cy="172" rx="6" ry="9" transform="rotate(35 644 172)" 
+               fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 5 (Far Top-Left Angled Drop) -->
+      <ellipse cx="366" cy="172" rx="6" ry="9" transform="rotate(-35 366 172)" 
+               fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 6 (Mid-Right Splash Drop) -->
+      <circle cx="674" cy="218" r="6" fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 7 (Mid-Left Splash Drop) -->
+      <circle cx="336" cy="218" r="6" fill="#26D9E7" stroke="#0B2530" stroke-width="2" />
+
+      <!-- Droplet 8 (Lower-Left Splash Drop) -->
+      <circle cx="326" cy="270" r="5" fill="#26D9E7" stroke="#0B2530" stroke-width="1.8" />
+
+      <!-- Droplet 9 (Lower-Right Splash Drop) -->
+      <circle cx="684" cy="270" r="5" fill="#26D9E7" stroke="#0B2530" stroke-width="1.8" />
+
+      <!-- Amber Filament Sparks -->
+      <circle cx="452" cy="186" r="4.5" fill="#FFA726" stroke="#0B2530" stroke-width="1.5" />
+      <circle cx="558" cy="186" r="4.5" fill="#FFA726" stroke="#0B2530" stroke-width="1.5" />
+    </g>
+  </g>
+  </g>
+
+  <!-- ==================== BRAND WORDMARK LOCKUP ==================== -->
+  <g id="brand-wordmark" transform="translate(760, 72)">
+<!-- ==================== 2. AMBIENT ATMOSPHERE & LIGHTING ==================== -->
+  <!-- Ambient Nixie Amber Halo -->
+  <circle cx="618" cy="418" r="185" fill="url(#grad-ambient-amber)" filter="url(#ambient-halo-dark)" />
+  <circle cx="618" cy="418" r="105" fill="#FF6D00" opacity="0.45" filter="url(#nixie-glow-wide)" />
+  <circle cx="618" cy="418" r="55" fill="#FFA000" opacity="0.55" filter="url(#nixie-glow-medium)" />
+
+  <!-- Ambient Cyan Floor Glow for SYS and POP -->
+  <ellipse cx="330" cy="420" rx="220" ry="100" fill="url(#grad-ambient-cyan-sys)" filter="url(#ambient-halo-dark)" />
+  <ellipse cx="920" cy="420" rx="240" ry="100" fill="url(#grad-ambient-cyan-pop)" filter="url(#ambient-halo-dark)" />
+
+  <!-- ==================== 3. NIXIE TUBE ASSEMBLY ==================== -->
+  <g id="nixie-tube">
+    <!-- Connector Base Pins -->
+    <g id="nixie-pins">
+      <rect x="584" y="544" width="4.2" height="32" rx="2" fill="url(#grad-pin-dark)" stroke="#0F172A" stroke-width="0.8" />
+      <rect x="597" y="544" width="4.2" height="34" rx="2" fill="url(#grad-pin-dark)" stroke="#0F172A" stroke-width="0.8" />
+      <rect x="610" y="544" width="4.2" height="36" rx="2" fill="url(#grad-pin-dark)" stroke="#0F172A" stroke-width="0.8" />
+      <rect x="622" y="544" width="4.2" height="36" rx="2" fill="url(#grad-pin-dark)" stroke="#0F172A" stroke-width="0.8" />
+      <rect x="635" y="544" width="4.2" height="34" rx="2" fill="url(#grad-pin-dark)" stroke="#0F172A" stroke-width="0.8" />
+      <rect x="648" y="544" width="4.2" height="32" rx="2" fill="url(#grad-pin-dark)" stroke="#0F172A" stroke-width="0.8" />
+    </g>
+
+    <!-- Glass Body Outer Shape & Base Shadow -->
+    <path id="glass-envelope" d="
+      M 611 250
+      C 611 242 613 227 618 227
+      C 623 227 625 242 625 250
+      C 646 252 674 274 674 330
+      L 674 518
+      C 674 538 654 546 618 546
+      C 582 546 562 538 562 518
+      L 562 330
+      C 562 274 590 252 611 250 Z"
+      fill="url(#grad-glass-body-dark)" stroke="#384D5E" stroke-width="1.8" stroke-linejoin="round" />
+    <path d="M 562 330 C 562 274 590 252 611 250 C 611 242 613 227 618 227 C 623 227 625 242 625 250 C 646 252 674 274 674 330 L 674 380 L 562 380 Z" fill="url(#grad-glass-top-dark)" />
+
+    <!-- Internal Structure: Structural Supports & Mica Spacers -->
+    <g id="internal-chassis">
+      <!-- Lower Bent Wire Leads in Glass Base -->
+      <path d="M 586 517 L 586 534 L 590 545
+               M 598 517 L 598 528 L 602 545
+               M 611 517 L 611 545
+               M 625 517 L 625 545
+               M 638 517 L 638 528 L 634 545
+               M 650 517 L 650 534 L 646 545"
+            fill="none" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" />
+
+      <!-- Top Mica Disc / Bracket -->
+      <rect x="612" y="272" width="12" height="9" rx="1.5" fill="#64748B" stroke="#1E293B" stroke-width="1" />
+      <path d="M 584 286 L 584 275 L 652 275 L 652 286" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" />
+      <rect x="574" y="286" width="88" height="9" rx="2.5" fill="#1B242C" stroke="#0E171E" stroke-width="1.4" />
+
+      <!-- Bottom Mica Disc -->
+      <rect x="574" y="508" width="88" height="9" rx="2.5" fill="#1B242C" stroke="#0E171E" stroke-width="1.4" />
+
+      <!-- Side Support Rods -->
+      <line x1="580" y1="286" x2="580" y2="514" stroke="#64748B" stroke-width="2.4" />
+      <line x1="656" y1="286" x2="656" y2="514" stroke="#64748B" stroke-width="2.4" />
+    </g>
+
+    <!-- Anode Honeycomb Mesh Grille with Internal Glow Backing -->
+    <rect x="580" y="295" width="76" height="213" rx="3" fill="url(#grad-anode-lit-dark)" />
+    <rect x="580" y="295" width="76" height="213" rx="3" fill="url(#pattern-mesh)" />
+    <!-- Mesh Top and Bottom Metal Mounting Tabs -->
+    <rect x="610" y="297" width="16" height="9" rx="1.5" fill="#8D5B2E" stroke="#4A2E16" stroke-width="1" />
+    <rect x="610" y="499" width="16" height="9" rx="1.5" fill="#8D5B2E" stroke="#4A2E16" stroke-width="1" />
+
+    <!-- Unlit Cathode Filament Wires (Delicate Digits Catching Glow) -->
+    <g id="unlit-cathodes">
+      <!-- Digit 0 / Oval outer loop -->
+      <path d="M 598 375 C 598 340 638 340 638 375 L 638 460 C 638 495 598 495 598 460 Z" 
+            fill="none" stroke="#F39C12" stroke-width="1.1" opacity="0.6" />
+      <path d="M 598 375 C 598 340 638 340 638 375 L 638 460 C 638 495 598 495 598 460 Z" 
+            fill="none" stroke="#26150D" stroke-width="0.8" opacity="0.7" />
+
+      <!-- Digit 8 / Curving loops -->
+      <ellipse cx="618" cy="380" rx="20" ry="26" fill="none" stroke="#F39C12" stroke-width="1.1" opacity="0.5" />
+      <ellipse cx="618" cy="445" rx="22" ry="34" fill="none" stroke="#F39C12" stroke-width="1.1" opacity="0.5" />
+
+      <!-- Digit 2 / Wave and base -->
+      <path d="M 602 365 C 612 345 634 350 634 372 C 634 398 602 430 600 465 L 638 465" 
+            fill="none" stroke="#E67E22" stroke-width="1.2" opacity="0.45" />
+
+      <!-- Digit 3 -->
+      <path d="M 602 360 C 624 350 638 370 622 396 C 640 415 636 450 606 455" 
+            fill="none" stroke="#E67E22" stroke-width="1.2" opacity="0.4" />
+    </g>
+
+    <!-- Active Glowing Digit 1 (Multi-Layer Neon Filament) -->
+    <g id="nixie-digit-1">
+      <!-- 1. Broad Volumetric Amber Corona -->
+      <path d="M 596 380 L 618 357 L 618 480" 
+            fill="none" stroke="#FF3D00" stroke-width="44" stroke-linecap="round" stroke-linejoin="round" 
+            opacity="0.5" filter="url(#nixie-glow-wide)" />
+
+      <!-- 2. Rich Amber Neon Plasma -->
+      <path d="M 596 380 L 618 357 L 618 480" 
+            fill="none" stroke="#FF8C00" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" 
+            opacity="0.88" filter="url(#nixie-glow-medium)" />
+
+      <!-- 3. Brilliant Golden Glow Sheath -->
+      <path d="M 596 380 L 618 357 L 618 480" 
+            fill="none" stroke="#FFCA28" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" 
+            opacity="0.98" filter="url(#nixie-glow-tight)" />
+
+      <!-- 4. Incandescent Hot Core Filament Wire -->
+      <path d="M 596 380 L 618 357 L 618 480" 
+            fill="none" stroke="#FFFFFA" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+
+    <!-- Glass Reflections & Realistic Specular Highlights -->
+    <g id="glass-highlights">
+      <!-- Exhaust Pip Specular -->
+      <ellipse cx="616" cy="234" rx="2.5" ry="3.5" fill="#FFFFFF" opacity="0.95" />
+      <path d="M 612 250 C 614 246 622 246 624 250" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.7" />
+
+      <!-- Shoulder Arched Highlight (Left) -->
+      <path d="M 570 300 C 570 262 590 252 612 250" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" opacity="0.85" />
+
+      <!-- Right Vertical Edge Specular Highlight -->
+      <line x1="671" y1="300" x2="671" y2="516" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" opacity="0.75" />
+      <line x1="667" y1="320" x2="667" y2="505" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity="0.45" />
+
+      <!-- Left Vertical Edge Specular Highlight -->
+      <line x1="565" y1="300" x2="565" y2="516" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" opacity="0.65" />
+      <line x1="569" y1="320" x2="569" y2="505" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity="0.35" />
+
+      <!-- Bottom Rim Curvature Highlights -->
+      <path d="M 574 528 C 586 540 650 540 662 528" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.55" />
+      <path d="M 584 537 C 600 544 636 544 652 537" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.45" />
+    </g>
+  </g>
+
+  <!-- ==================== 4. MAIN WORDMARK TYPOGRAPHY (SYS & POP) ==================== -->
+  <g id="wordmark-letters" fill-rule="evenodd">
+    <!-- Layer A: Solid Dark Interior Body -->
+    <g id="letters-body" fill="url(#grad-letter-body)">
+      <path d="M 140 346 L 244 346 L 230 374 L 156 374 L 149 381 L 149 399 L 156 406 L 225 406 L 249 430 L 249 472 L 225 496 L 121 496 L 135 468 L 209 468 L 216 461 L 216 443 L 209 436 L 140 436 L 116 412 L 116 370 Z" />
+      <path d="M 257 347 L 294 347 L 348 439 L 348 496 L 315 496 L 315 439 Z" />
+      <path d="M 368 347 L 406 347 L 358 423 L 341 392 Z" />
+      <path d="M 433 346 L 537 346 L 523 374 L 449 374 L 442 381 L 442 399 L 449 406 L 518 406 L 542 430 L 542 472 L 518 496 L 414 496 L 428 468 L 502 468 L 509 461 L 509 443 L 502 436 L 433 436 L 409 412 L 409 370 Z" />
+      <path d="M 696 496 L 696 421 L 728 381 L 728 421 L 782 421 L 790 413 L 790 383 L 782 375 L 693 375 L 709 346 L 799 346 L 822 369 L 822 427 L 799 451 L 728 451 L 728 496 Z" />
+      <path d="M 869 346 L 971 346 L 995 370 L 995 472 L 971 496 L 869 496 L 845 472 L 845 370 Z M 896 379 L 944 379 L 962 397 L 962 445 L 944 463 L 896 463 L 878 445 L 878 397 Z" />
+      <path d="M 1022 496 L 1022 421 L 1054 381 L 1054 421 L 1108 421 L 1116 413 L 1116 383 L 1108 375 L 1019 375 L 1035 346 L 1125 346 L 1148 369 L 1148 427 L 1125 451 L 1054 451 L 1054 496 Z" />
+    </g>
+
+    <!-- Layer B1: Soft Atmospheric Cyan Ambient Bloom -->
+    <g id="letters-bloom" fill="none" stroke-linejoin="miter" stroke-miterlimit="4" filter="url(#cyan-glow-bloom)" opacity="0.6">
+      <path d="M 140 346 L 244 346 L 230 374 L 156 374 L 149 381 L 149 399 L 156 406 L 225 406 L 249 430 L 249 472 L 225 496 L 121 496 L 135 468 L 209 468 L 216 461 L 216 443 L 209 436 L 140 436 L 116 412 L 116 370 Z" stroke="#00E5FF" stroke-width="10" />
+      <path d="M 257 347 L 294 347 L 348 439 L 348 496 L 315 496 L 315 439 Z" stroke="#00E5FF" stroke-width="10" />
+      <path d="M 368 347 L 406 347 L 358 423 L 341 392 Z" stroke="#00E5FF" stroke-width="10" />
+      <path d="M 433 346 L 537 346 L 523 374 L 449 374 L 442 381 L 442 399 L 449 406 L 518 406 L 542 430 L 542 472 L 518 496 L 414 496 L 428 468 L 502 468 L 509 461 L 509 443 L 502 436 L 433 436 L 409 412 L 409 370 Z" stroke="url(#stroke-cyan-to-amber-s2-glow)" stroke-width="10" />
+      <path d="M 696 496 L 696 421 L 728 381 L 728 421 L 782 421 L 790 413 L 790 383 L 782 375 L 693 375 L 709 346 L 799 346 L 822 369 L 822 427 L 799 451 L 728 451 L 728 496 Z" stroke="url(#stroke-amber-to-cyan-p1-glow)" stroke-width="10" />
+      <path d="M 869 346 L 971 346 L 995 370 L 995 472 L 971 496 L 869 496 L 845 472 L 845 370 Z M 896 379 L 944 379 L 962 397 L 962 445 L 944 463 L 896 463 L 878 445 L 878 397 Z" stroke="#00E5FF" stroke-width="10" />
+      <path d="M 1022 496 L 1022 421 L 1054 381 L 1054 421 L 1108 421 L 1116 413 L 1116 383 L 1108 375 L 1019 375 L 1035 346 L 1125 346 L 1148 369 L 1148 427 L 1125 451 L 1054 451 L 1054 496 Z" stroke="#00E5FF" stroke-width="10" />
+    </g>
+
+    <!-- Layer B2: Neon Cyan Focused Outer Glow -->
+    <g id="letters-glow" fill="none" stroke-linejoin="miter" stroke-miterlimit="4" filter="url(#cyan-glow-wide)" opacity="0.85">
+      <path d="M 140 346 L 244 346 L 230 374 L 156 374 L 149 381 L 149 399 L 156 406 L 225 406 L 249 430 L 249 472 L 225 496 L 121 496 L 135 468 L 209 468 L 216 461 L 216 443 L 209 436 L 140 436 L 116 412 L 116 370 Z" stroke="#26D9E7" stroke-width="4.5" />
+      <path d="M 257 347 L 294 347 L 348 439 L 348 496 L 315 496 L 315 439 Z" stroke="#26D9E7" stroke-width="4.5" />
+      <path d="M 368 347 L 406 347 L 358 423 L 341 392 Z" stroke="#26D9E7" stroke-width="4.5" />
+      <path d="M 433 346 L 537 346 L 523 374 L 449 374 L 442 381 L 442 399 L 449 406 L 518 406 L 542 430 L 542 472 L 518 496 L 414 496 L 428 468 L 502 468 L 509 461 L 509 443 L 502 436 L 433 436 L 409 412 L 409 370 Z" stroke="url(#stroke-cyan-to-amber-s2-glow)" stroke-width="4.5" />
+      <path d="M 696 496 L 696 421 L 728 381 L 728 421 L 782 421 L 790 413 L 790 383 L 782 375 L 693 375 L 709 346 L 799 346 L 822 369 L 822 427 L 799 451 L 728 451 L 728 496 Z" stroke="url(#stroke-amber-to-cyan-p1-glow)" stroke-width="4.5" />
+      <path d="M 869 346 L 971 346 L 995 370 L 995 472 L 971 496 L 869 496 L 845 472 L 845 370 Z M 896 379 L 944 379 L 962 397 L 962 445 L 944 463 L 896 463 L 878 445 L 878 397 Z" stroke="#26D9E7" stroke-width="4.5" />
+      <path d="M 1022 496 L 1022 421 L 1054 381 L 1054 421 L 1108 421 L 1116 413 L 1116 383 L 1108 375 L 1019 375 L 1035 346 L 1125 346 L 1148 369 L 1148 427 L 1125 451 L 1054 451 L 1054 496 Z" stroke="#26D9E7" stroke-width="4.5" />
+    </g>
+
+    <!-- Layer C: Crisp Electric Cyber Cyan Contour Stroke -->
+    <g id="letters-contour" fill="none" stroke-linejoin="miter" stroke-miterlimit="4">
+      <path d="M 140 346 L 244 346 L 230 374 L 156 374 L 149 381 L 149 399 L 156 406 L 225 406 L 249 430 L 249 472 L 225 496 L 121 496 L 135 468 L 209 468 L 216 461 L 216 443 L 209 436 L 140 436 L 116 412 L 116 370 Z" stroke="#4DEEEA" stroke-width="2.6" />
+      <path d="M 257 347 L 294 347 L 348 439 L 348 496 L 315 496 L 315 439 Z" stroke="#4DEEEA" stroke-width="2.6" />
+      <path d="M 368 347 L 406 347 L 358 423 L 341 392 Z" stroke="#4DEEEA" stroke-width="2.6" />
+      <path d="M 433 346 L 537 346 L 523 374 L 449 374 L 442 381 L 442 399 L 449 406 L 518 406 L 542 430 L 542 472 L 518 496 L 414 496 L 428 468 L 502 468 L 509 461 L 509 443 L 502 436 L 433 436 L 409 412 L 409 370 Z" stroke="url(#stroke-cyan-to-amber-s2)" stroke-width="2.6" />
+      <path d="M 696 496 L 696 421 L 728 381 L 728 421 L 782 421 L 790 413 L 790 383 L 782 375 L 693 375 L 709 346 L 799 346 L 822 369 L 822 427 L 799 451 L 728 451 L 728 496 Z" stroke="url(#stroke-amber-to-cyan-p1)" stroke-width="2.6" />
+      <path d="M 869 346 L 971 346 L 995 370 L 995 472 L 971 496 L 869 496 L 845 472 L 845 370 Z M 896 379 L 944 379 L 962 397 L 962 445 L 944 463 L 896 463 L 878 445 L 878 397 Z" stroke="#4DEEEA" stroke-width="2.6" />
+      <path d="M 1022 496 L 1022 421 L 1054 381 L 1054 421 L 1108 421 L 1116 413 L 1116 383 L 1108 375 L 1019 375 L 1035 346 L 1125 346 L 1148 369 L 1148 427 L 1125 451 L 1054 451 L 1054 496 Z" stroke="#4DEEEA" stroke-width="2.6" />
+    </g>
+
+    <!-- Layer D: Inner Bright Specular Core Stroke -->
+    <g id="letters-core" fill="none" stroke-linejoin="miter" stroke-miterlimit="4" opacity="0.9">
+      <path d="M 140 346 L 244 346 L 230 374 L 156 374 L 149 381 L 149 399 L 156 406 L 225 406 L 249 430 L 249 472 L 225 496 L 121 496 L 135 468 L 209 468 L 216 461 L 216 443 L 209 436 L 140 436 L 116 412 L 116 370 Z" stroke="#FFFFFF" stroke-width="0.8" />
+      <path d="M 257 347 L 294 347 L 348 439 L 348 496 L 315 496 L 315 439 Z" stroke="#FFFFFF" stroke-width="0.8" />
+      <path d="M 368 347 L 406 347 L 358 423 L 341 392 Z" stroke="#FFFFFF" stroke-width="0.8" />
+      <path d="M 433 346 L 537 346 L 523 374 L 449 374 L 442 381 L 442 399 L 449 406 L 518 406 L 542 430 L 542 472 L 518 496 L 414 496 L 428 468 L 502 468 L 509 461 L 509 443 L 502 436 L 433 436 L 409 412 L 409 370 Z" stroke="#FFF8E1" stroke-width="0.8" />
+      <path d="M 696 496 L 696 421 L 728 381 L 728 421 L 782 421 L 790 413 L 790 383 L 782 375 L 693 375 L 709 346 L 799 346 L 822 369 L 822 427 L 799 451 L 728 451 L 728 496 Z" stroke="#FFF8E1" stroke-width="0.8" />
+      <path d="M 869 346 L 971 346 L 995 370 L 995 472 L 971 496 L 869 496 L 845 472 L 845 370 Z M 896 379 L 944 379 L 962 397 L 962 445 L 944 463 L 896 463 L 878 445 L 878 397 Z" stroke="#FFFFFF" stroke-width="0.8" />
+      <path d="M 1022 496 L 1022 421 L 1054 381 L 1054 421 L 1108 421 L 1116 413 L 1116 383 L 1108 375 L 1019 375 L 1035 346 L 1125 346 L 1148 369 L 1148 427 L 1125 451 L 1054 451 L 1054 496 Z" stroke="#FFFFFF" stroke-width="0.8" />
+    </g>
+  </g>
+
+  <!-- ==================== 5. TAGLINE TYPOGRAPHY ==================== -->
+  <g id="tagline" transform="translate(120, 595)">
+    <path d="M 935.00 9.50 C 935.35 9.49 935.35 9.49 937.12 9.45 C 942.02 9.49 944.57 10.52 948.00 14.00 C 949.75 17.50 949.31 21.45 949.38 25.31 C 949.41 26.17 949.45 27.02 949.49 27.90 C 949.55 32.16 949.38 34.41 947.04 38.07 C 942.90 40.70 939.74 40.71 934.94 40.56 C 934.54 40.57 934.54 40.57 932.51 40.60 C 929.00 40.55 926.59 40.32 923.48 38.65 C 921.05 34.29 921.38 29.90 921.44 25.00 C 921.43 24.50 921.43 24.50 921.37 21.98 C 921.38 14.81 921.38 14.81 924.04 11.34 C 927.75 9.66 931.00 9.41 935.00 9.50 Z M 680.56 9.50 C 681.84 9.49 683.12 9.48 684.44 9.47 C 688.51 10.08 690.16 11.08 693.00 14.00 C 694.33 17.99 694.30 21.69 694.38 25.88 C 694.41 26.68 694.45 27.48 694.49 28.31 C 694.55 32.43 694.33 34.49 692.04 38.04 C 687.90 40.71 684.76 40.71 679.94 40.56 C 679.54 40.57 679.54 40.57 677.51 40.60 C 673.77 40.55 671.63 40.43 668.49 38.28 C 664.54 32.24 665.90 23.36 666.16 16.41 C 668.39 10.02 674.60 9.45 680.56 9.50 Z M 560.31 9.69 C 560.97 9.67 560.97 9.67 564.30 9.57 C 568.50 10.06 570.06 11.03 573.00 14.00 C 574.75 17.50 574.31 21.45 574.38 25.31 C 574.41 26.17 574.45 27.02 574.49 27.90 C 574.55 32.19 574.39 34.41 572.01 38.07 C 568.02 40.63 565.14 40.71 560.50 40.56 C 559.75 40.57 559.01 40.58 558.24 40.60 C 554.67 40.55 552.28 40.13 549.00 38.62 C 545.86 34.51 546.31 30.53 546.44 25.50 C 546.43 24.55 546.42 23.60 546.40 22.62 C 546.48 15.71 546.48 15.71 548.91 12.41 C 552.72 9.84 555.82 9.75 560.31 9.69 Z M 732.00 10.00 C 733.59 9.95 733.59 9.95 741.62 9.69 C 742.12 9.66 742.12 9.66 744.62 9.55 C 748.87 9.48 752.10 9.54 755.59 12.14 C 758.31 15.36 758.80 16.84 759.00 21.00 C 759.09 22.07 759.18 23.15 759.27 24.25 C 759.54 33.04 759.54 33.04 757.92 35.92 C 756.56 37.25 756.56 37.25 754.00 39.00 C 753.67 39.33 753.34 39.66 753.00 40.00 C 751.44 40.09 749.87 40.11 748.31 40.10 C 747.46 40.10 746.61 40.09 745.73 40.09 C 744.64 40.08 743.56 40.07 742.44 40.06 C 738.99 40.04 735.55 40.02 732.00 40.00 C 732.00 30.10 732.00 20.20 732.00 10.00 Z M 776.00 10.00 C 779.01 9.92 782.02 9.84 785.12 9.75 C 786.06 9.71 787.00 9.68 787.97 9.64 C 793.63 9.56 796.68 10.27 801.00 14.00 C 802.68 17.37 802.27 21.11 802.31 24.81 C 802.34 25.62 802.37 26.43 802.40 27.26 C 802.44 31.36 802.34 33.46 800.11 37.01 C 797.08 39.87 795.49 40.12 791.43 40.10 C 790.62 40.10 789.82 40.09 788.98 40.09 C 787.96 40.08 786.93 40.07 785.88 40.06 C 784.25 40.05 784.25 40.05 776.00 40.00 C 776.00 30.10 776.00 20.20 776.00 10.00 Z M 220.00 10.00 C 223.20 9.92 226.39 9.84 229.69 9.75 C 230.69 9.71 231.68 9.68 232.71 9.64 C 236.98 9.59 239.37 9.61 243.08 11.89 C 246.11 15.22 246.26 17.54 246.24 22.04 C 245.92 24.66 244.61 25.97 243.00 28.00 C 243.21 32.01 244.92 34.65 247.00 38.00 C 247.00 38.66 247.00 39.32 247.00 40.00 C 244.36 40.00 241.72 40.00 239.00 40.00 C 238.72 39.36 238.44 38.72 238.15 38.07 C 236.92 35.52 235.72 33.25 234.00 31.00 C 230.19 29.94 230.19 29.94 227.00 30.00 C 227.00 33.30 227.00 36.60 227.00 40.00 C 224.69 40.00 222.38 40.00 220.00 40.00 C 220.00 30.10 220.00 20.20 220.00 10.00 Z M 526.38 9.81 C 527.48 9.80 528.58 9.78 529.71 9.77 C 533.17 10.01 535.82 10.62 539.00 12.00 C 541.19 15.29 541.69 17.09 542.00 21.00 C 541.09 24.57 540.05 26.92 538.00 30.00 C 538.29 30.55 538.58 31.11 538.88 31.68 C 539.06 32.04 539.06 32.04 540.00 33.88 C 540.37 34.59 540.74 35.31 541.12 36.05 C 542.00 38.00 542.00 38.00 542.00 40.00 C 539.69 40.00 537.38 40.00 535.00 40.00 C 534.72 39.36 534.44 38.72 534.15 38.07 C 532.92 35.52 531.72 33.25 530.00 31.00 C 526.19 29.94 526.19 29.94 523.00 30.00 C 523.00 33.30 523.00 36.60 523.00 40.00 C 520.69 40.00 518.38 40.00 516.00 40.00 C 516.00 30.43 516.00 20.86 516.00 11.00 C 519.69 10.08 522.60 9.83 526.38 9.81 Z M 437.00 10.00 C 438.98 10.00 440.96 10.00 443.00 10.00 C 445.05 12.08 445.05 12.08 446.75 14.81 C 447.32 15.71 447.89 16.60 448.48 17.52 C 448.73 17.93 448.73 17.93 450.00 20.00 C 450.33 20.50 450.33 20.50 452.00 23.00 C 453.15 21.38 454.29 19.75 455.44 18.12 C 456.08 17.22 456.71 16.32 457.37 15.38 C 459.00 13.00 459.00 13.00 460.00 11.00 C 463.50 10.31 463.50 10.31 467.00 10.00 C 468.00 11.00 468.00 11.00 468.11 13.78 C 468.11 14.99 468.10 16.20 468.10 17.44 C 468.09 18.75 468.09 20.05 468.09 21.40 C 468.08 22.79 468.07 24.17 468.06 25.56 C 468.06 26.96 468.05 28.35 468.05 29.74 C 468.04 33.16 468.02 36.58 468.00 40.00 C 465.69 40.00 463.38 40.00 461.00 40.00 C 460.67 34.72 460.34 29.44 460.00 24.00 C 459.64 24.66 459.64 24.66 457.81 28.00 C 456.58 30.25 456.58 30.25 455.00 32.00 C 452.53 32.50 452.53 32.50 450.00 32.00 C 447.53 29.60 445.94 26.88 444.00 24.00 C 444.00 29.28 444.00 34.56 444.00 40.00 C 441.69 40.00 439.38 40.00 437.00 40.00 C 437.00 30.10 437.00 20.20 437.00 10.00 Z M 29.80 9.65 C 33.00 10.00 33.00 10.00 35.20 11.98 C 35.83 12.85 36.47 13.72 37.12 14.62 C 37.77 15.48 38.41 16.34 39.07 17.23 C 41.09 20.13 43.05 23.05 45.00 26.00 C 45.03 25.46 45.03 25.46 45.18 22.75 C 45.27 21.36 45.35 19.96 45.44 18.56 C 45.48 17.86 45.52 17.15 45.56 16.42 C 45.89 11.11 45.89 11.11 47.00 10.00 C 48.98 10.00 50.96 10.00 53.00 10.00 C 53.00 19.90 53.00 29.80 53.00 40.00 C 47.00 40.00 47.00 40.00 44.84 38.06 C 44.53 37.63 44.53 37.63 42.94 35.44 C 42.27 34.53 41.59 33.63 40.90 32.69 C 40.27 31.80 39.65 30.92 39.00 30.00 C 38.47 29.27 37.93 28.53 37.38 27.78 C 36.23 26.20 35.11 24.60 34.00 23.00 C 33.67 28.61 33.34 34.22 33.00 40.00 C 30.69 40.00 28.38 40.00 26.00 40.00 C 25.98 35.89 25.96 31.78 25.95 27.66 C 25.94 26.27 25.93 24.87 25.92 23.47 C 25.91 21.46 25.91 19.45 25.90 17.44 C 25.90 16.23 25.89 15.02 25.89 13.78 C 26.04 10.02 26.08 10.11 29.80 9.65 Z M 954.00 10.00 C 961.00 10.00 961.00 10.00 962.90 11.56 C 963.36 12.27 963.83 12.98 964.31 13.72 C 964.83 14.49 965.35 15.25 965.88 16.04 C 966.39 16.85 966.91 17.66 967.44 18.50 C 967.98 19.31 968.52 20.12 969.08 20.96 C 970.41 22.96 971.71 24.97 973.00 27.00 C 973.03 26.43 973.03 26.43 973.18 23.54 C 973.27 22.04 973.35 20.55 973.44 19.06 C 973.48 18.31 973.52 17.55 973.56 16.78 C 973.89 11.11 973.89 11.11 975.00 10.00 C 977.50 9.88 977.50 9.88 980.00 10.00 C 981.00 11.00 981.00 11.00 981.11 13.78 C 981.11 14.99 981.10 16.20 981.10 17.44 C 981.09 18.75 981.09 20.05 981.09 21.40 C 981.08 22.79 981.07 24.17 981.06 25.56 C 981.06 26.96 981.05 28.35 981.05 29.74 C 981.04 33.16 981.02 36.58 981.00 40.00 C 975.21 40.15 975.21 40.15 973.35 38.82 C 972.92 38.26 972.50 37.70 972.06 37.12 C 971.82 36.81 971.82 36.81 970.59 35.22 C 970.07 34.49 969.54 33.76 969.00 33.00 C 968.36 32.11 967.72 31.22 967.07 30.31 C 965.36 27.89 963.68 25.45 962.00 23.00 C 961.67 28.61 961.34 34.22 961.00 40.00 C 958.69 40.00 956.38 40.00 954.00 40.00 C 954.00 30.10 954.00 20.20 954.00 10.00 Z M 699.00 10.00 C 705.00 10.00 705.00 10.00 706.91 11.43 C 707.43 12.09 707.96 12.76 708.50 13.44 C 709.08 14.16 709.66 14.88 710.25 15.62 C 712.98 19.33 715.52 23.12 718.00 27.00 C 718.33 21.39 718.66 15.78 719.00 10.00 C 720.98 10.00 722.96 10.00 725.00 10.00 C 726.00 11.00 726.00 11.00 726.11 13.78 C 726.11 14.99 726.10 16.20 726.10 17.44 C 726.09 18.75 726.09 20.05 726.09 21.40 C 726.08 22.79 726.07 24.17 726.06 25.56 C 726.06 26.96 726.05 28.35 726.05 29.74 C 726.04 33.16 726.02 36.58 726.00 40.00 C 719.55 40.46 719.55 40.46 717.10 38.44 C 716.64 37.73 716.17 37.02 715.69 36.28 C 715.17 35.51 714.65 34.75 714.12 33.96 C 713.61 33.15 713.09 32.34 712.56 31.50 C 712.02 30.69 711.48 29.88 710.92 29.04 C 709.59 27.04 708.29 25.02 707.00 23.00 C 706.67 28.61 706.34 34.22 706.00 40.00 C 703.69 40.00 701.38 40.00 699.00 40.00 C 699.00 30.10 699.00 20.20 699.00 10.00 Z M 149.74 9.55 C 153.00 10.00 153.00 10.00 155.67 12.70 C 156.53 13.87 157.37 15.05 158.19 16.25 C 158.61 16.84 159.04 17.42 159.47 18.03 C 160.66 19.67 161.83 21.34 163.00 23.00 C 163.99 24.32 164.98 25.64 166.00 27.00 C 166.33 21.39 166.66 15.78 167.00 10.00 C 168.98 10.00 170.96 10.00 173.00 10.00 C 174.42 12.85 174.01 15.15 173.88 18.32 C 173.83 19.58 173.78 20.83 173.73 22.13 C 173.68 23.45 173.62 24.77 173.56 26.12 C 173.51 27.46 173.46 28.80 173.40 30.14 C 173.27 33.43 173.14 36.72 173.00 40.00 C 170.17 40.17 170.17 40.17 167.00 40.00 C 164.91 37.94 163.40 36.18 161.75 33.81 C 161.32 33.23 160.88 32.66 160.44 32.06 C 158.09 28.85 156.28 25.77 155.00 22.00 C 154.34 22.00 153.68 22.00 153.00 22.00 C 153.08 23.22 153.17 24.43 153.25 25.68 C 153.36 27.27 153.46 28.85 153.56 30.44 C 153.62 31.24 153.67 32.04 153.73 32.87 C 153.86 34.91 153.94 36.96 154.00 39.00 C 153.00 40.00 153.00 40.00 150.00 40.12 C 147.00 40.00 147.00 40.00 146.00 39.00 C 145.90 36.94 145.87 34.88 145.87 32.81 C 145.87 31.56 145.86 30.30 145.86 29.01 C 145.87 28.35 145.87 27.69 145.87 27.02 C 145.87 25.01 145.87 23.00 145.86 20.99 C 145.86 19.74 145.87 18.48 145.87 17.19 C 145.87 16.61 145.87 16.61 145.87 13.67 C 146.05 10.03 146.15 10.14 149.74 9.55 Z M 122.00 10.00 C 123.43 9.86 124.87 9.77 126.31 9.69 C 127.11 9.63 127.91 9.57 128.74 9.51 C 131.00 10.00 131.00 10.00 132.65 12.18 C 133.96 14.91 135.16 17.63 136.26 20.45 C 136.66 21.46 137.05 22.47 137.46 23.52 C 137.87 24.56 138.27 25.61 138.69 26.69 C 138.90 27.22 138.90 27.22 139.95 29.89 C 143.00 37.74 143.00 37.74 143.00 40.00 C 140.69 40.00 138.38 40.00 136.00 40.00 C 135.01 38.02 134.02 36.04 133.00 34.00 C 132.65 34.01 132.65 34.01 130.88 34.04 C 129.97 34.04 129.06 34.05 128.12 34.06 C 127.22 34.07 126.32 34.09 125.38 34.10 C 123.00 34.00 123.00 34.00 121.00 33.00 C 120.86 33.78 120.71 34.57 120.56 35.38 C 120.00 38.00 120.00 38.00 119.00 40.00 C 116.69 40.00 114.38 40.00 112.00 40.00 C 113.37 32.98 115.51 26.58 118.12 19.94 C 118.50 18.98 118.87 18.02 119.25 17.03 C 120.16 14.68 121.08 12.34 122.00 10.00 Z M 261.55 9.90 C 262.39 9.91 263.24 9.91 264.11 9.91 C 264.54 9.92 264.54 9.92 266.75 9.94 C 267.64 9.94 268.53 9.95 269.44 9.95 C 271.63 9.96 273.81 9.98 276.00 10.00 C 275.34 12.31 274.68 14.62 274.00 17.00 C 269.05 17.00 264.10 17.00 259.00 17.00 C 259.00 18.32 259.00 19.64 259.00 21.00 C 261.31 21.16 261.31 21.16 273.00 22.00 C 273.00 23.98 273.00 25.96 273.00 28.00 C 268.05 28.00 263.10 28.00 258.00 28.00 C 258.00 29.98 258.00 31.96 258.00 34.00 C 263.61 34.00 269.22 34.00 275.00 34.00 C 275.33 35.65 275.66 37.30 276.00 39.00 C 274.31 40.69 272.21 40.13 269.91 40.13 C 268.88 40.13 267.85 40.14 266.79 40.14 C 266.24 40.13 266.24 40.13 263.50 40.12 C 262.42 40.13 261.33 40.13 260.21 40.14 C 259.18 40.14 258.15 40.13 257.09 40.13 C 256.14 40.13 255.19 40.13 254.21 40.13 C 252.00 40.00 252.00 40.00 251.00 39.00 C 250.75 34.88 250.81 30.75 250.81 26.62 C 250.80 25.46 250.79 24.30 250.78 23.10 C 250.77 21.99 250.77 20.87 250.77 19.73 C 250.77 18.70 250.76 17.68 250.76 16.62 C 251.00 14.00 251.00 14.00 253.00 11.00 C 255.85 9.95 258.53 9.88 261.55 9.90 Z M 888.23 9.90 C 888.63 9.90 888.63 9.90 890.66 9.91 C 891.08 9.92 891.08 9.92 893.19 9.94 C 893.61 9.94 893.61 9.94 895.75 9.95 C 897.83 9.96 899.92 9.98 902.00 10.00 C 902.00 11.98 902.00 13.96 902.00 16.00 C 898.54 17.07 895.36 17.10 891.75 17.06 C 890.67 17.05 889.59 17.04 888.48 17.04 C 887.66 17.02 886.84 17.01 886.00 17.00 C 886.00 18.32 886.00 19.64 886.00 21.00 C 886.48 21.01 886.48 21.01 888.92 21.04 C 890.19 21.09 891.45 21.14 892.75 21.19 C 894.00 21.22 895.26 21.26 896.55 21.29 C 900.00 22.00 900.00 22.00 902.42 24.27 C 904.00 27.00 904.57 28.45 904.56 31.56 C 904.58 32.31 904.61 33.05 904.63 33.82 C 903.62 37.33 902.19 38.23 899.00 40.00 C 895.38 40.48 891.83 40.38 888.19 40.25 C 887.21 40.23 886.23 40.21 885.22 40.20 C 882.81 40.15 880.41 40.08 878.00 40.00 C 878.00 38.02 878.00 36.04 878.00 34.00 C 883.94 33.67 889.88 33.34 896.00 33.00 C 896.00 31.35 896.00 29.70 896.00 28.00 C 895.04 28.05 894.07 28.09 893.08 28.14 C 891.81 28.18 890.55 28.21 889.25 28.25 C 888.62 28.27 888.62 28.27 885.45 28.39 C 882.00 28.00 882.00 28.00 879.57 26.30 C 877.73 23.60 877.49 22.18 877.56 18.94 C 877.56 18.51 877.56 18.51 877.57 16.34 C 878.08 13.56 878.77 12.69 881.00 11.00 C 883.77 10.08 885.38 9.88 888.23 9.90 Z M 344.64 9.80 C 345.07 9.81 345.07 9.81 347.19 9.82 C 348.06 9.84 348.92 9.86 349.81 9.88 C 350.70 9.88 351.58 9.89 352.49 9.90 C 354.66 9.93 356.83 9.96 359.00 10.00 C 360.00 13.00 360.00 13.00 359.00 16.00 C 356.36 16.16 356.36 16.16 343.00 17.00 C 343.00 18.65 343.00 20.30 343.00 22.00 C 347.62 22.00 352.24 22.00 357.00 22.00 C 357.00 23.98 357.00 25.96 357.00 28.00 C 352.05 28.00 347.10 28.00 342.00 28.00 C 342.33 29.65 342.66 31.30 343.00 33.00 C 348.28 33.33 353.56 33.66 359.00 34.00 C 359.00 35.98 359.00 37.96 359.00 40.00 C 351.41 40.00 343.82 40.00 336.00 40.00 C 335.12 36.48 334.88 33.94 334.90 30.36 C 334.90 29.82 334.90 29.82 334.91 27.12 C 334.92 26.01 334.93 24.89 334.94 23.75 C 334.94 22.62 334.95 21.50 334.95 20.34 C 334.96 17.56 334.98 14.78 335.00 12.00 C 338.36 10.50 340.97 9.75 344.64 9.80 Z M 996.13 9.90 C 996.94 9.91 997.74 9.91 998.57 9.91 C 999.00 9.92 999.00 9.92 1001.12 9.94 C 1001.97 9.94 1002.82 9.95 1003.70 9.95 C 1005.80 9.96 1007.90 9.98 1010.00 10.00 C 1011.00 13.00 1011.00 13.00 1010.00 16.00 C 1007.36 16.16 1007.36 16.16 994.00 17.00 C 994.00 18.32 994.00 19.64 994.00 21.00 C 994.96 21.03 995.93 21.05 996.92 21.08 C 997.55 21.11 997.55 21.11 1000.75 21.25 C 1001.38 21.27 1001.38 21.27 1004.55 21.39 C 1008.00 22.00 1008.00 22.00 1010.43 23.73 C 1012.29 26.41 1012.51 27.83 1012.44 31.06 C 1012.44 31.92 1012.43 32.78 1012.43 33.66 C 1011.92 36.42 1011.18 37.29 1009.00 39.00 C 1006.60 40.20 1005.11 40.11 1002.43 40.10 C 1001.53 40.09 1000.64 40.09 999.71 40.09 C 998.78 40.08 997.84 40.07 996.88 40.06 C 995.93 40.06 994.99 40.05 994.01 40.05 C 991.67 40.04 989.34 40.02 987.00 40.00 C 986.62 38.34 986.29 36.68 986.00 35.00 C 988.12 32.88 992.62 33.58 995.56 33.44 C 996.37 33.39 997.18 33.35 998.01 33.31 C 1000.00 33.20 1002.00 33.10 1004.00 33.00 C 1004.00 31.68 1004.00 30.36 1004.00 29.00 C 1003.12 28.99 1002.24 28.97 1001.33 28.96 C 991.92 28.57 991.92 28.57 987.69 25.94 C 985.32 21.81 985.32 19.73 986.00 15.00 C 988.99 11.11 991.33 9.87 996.13 9.90 Z M 595.38 9.88 C 595.74 9.88 595.74 9.88 597.61 9.90 C 599.40 9.93 601.20 9.96 603.00 10.00 C 602.67 11.98 602.34 13.96 602.00 16.00 C 597.05 16.33 592.10 16.66 587.00 17.00 C 587.00 18.32 587.00 19.64 587.00 21.00 C 587.88 21.01 588.76 21.03 589.67 21.04 C 599.08 21.43 599.08 21.43 603.31 24.06 C 605.16 27.28 605.59 29.30 605.66 32.94 C 604.53 36.47 603.00 37.83 600.00 40.00 C 596.37 40.60 592.85 40.47 589.19 40.31 C 588.70 40.30 588.70 40.30 586.22 40.24 C 583.81 40.19 581.41 40.10 579.00 40.00 C 579.00 38.02 579.00 36.04 579.00 34.00 C 584.94 34.00 590.88 34.00 597.00 34.00 C 597.00 32.02 597.00 30.04 597.00 28.00 C 596.56 28.02 596.56 28.02 594.33 28.14 C 593.75 28.16 593.75 28.16 590.81 28.25 C 590.24 28.27 590.24 28.27 587.33 28.39 C 583.33 27.92 581.78 26.86 579.00 24.00 C 577.88 20.14 577.64 17.96 579.06 14.19 C 583.34 9.36 589.39 9.73 595.38 9.88 Z M 72.50 9.88 C 73.29 9.87 74.07 9.87 74.88 9.86 C 80.75 9.87 80.75 9.87 83.00 11.00 C 82.67 12.65 82.34 14.30 82.00 16.00 C 76.72 16.00 71.44 16.00 66.00 16.00 C 66.00 17.98 66.00 19.96 66.00 22.00 C 66.96 21.95 67.93 21.91 68.92 21.86 C 70.19 21.82 71.45 21.79 72.75 21.75 C 74.00 21.70 75.26 21.66 76.55 21.61 C 80.00 22.00 80.00 22.00 82.42 23.70 C 84.26 26.38 84.54 27.78 84.50 31.00 C 84.51 31.85 84.52 32.69 84.53 33.56 C 83.77 37.04 83.02 38.05 80.00 40.00 C 76.40 40.49 72.87 40.38 69.25 40.25 C 68.76 40.24 68.76 40.24 66.27 40.20 C 63.85 40.15 61.42 40.08 59.00 40.00 C 59.00 38.02 59.00 36.04 59.00 34.00 C 61.80 33.84 61.80 33.84 76.00 33.00 C 76.33 31.35 76.66 29.70 77.00 28.00 C 76.05 28.06 75.09 28.12 74.11 28.18 C 63.89 28.54 63.89 28.54 59.62 25.94 C 57.57 22.23 57.33 20.18 58.00 16.00 C 62.10 9.72 65.43 9.84 72.50 9.88 Z M 618.77 9.90 C 619.66 9.91 620.54 9.91 621.46 9.91 C 621.92 9.92 621.92 9.92 624.25 9.94 C 625.19 9.94 626.12 9.95 627.09 9.95 C 629.39 9.96 631.70 9.98 634.00 10.00 C 633.67 11.98 633.34 13.96 633.00 16.00 C 627.72 16.00 622.44 16.00 617.00 16.00 C 617.00 17.65 617.00 19.30 617.00 21.00 C 619.31 21.16 619.31 21.16 631.00 22.00 C 631.00 23.98 631.00 25.96 631.00 28.00 C 626.38 28.00 621.76 28.00 617.00 28.00 C 617.00 29.98 617.00 31.96 617.00 34.00 C 622.61 34.00 628.22 34.00 634.00 34.00 C 634.00 35.98 634.00 37.96 634.00 40.00 C 626.08 40.00 618.16 40.00 610.00 40.00 C 610.00 30.43 610.00 20.86 610.00 11.00 C 613.27 10.18 615.48 9.88 618.77 9.90 Z M 815.67 9.80 C 816.56 9.81 817.45 9.82 818.37 9.82 C 818.84 9.83 818.84 9.83 821.19 9.88 C 822.13 9.88 823.07 9.89 824.04 9.90 C 826.36 9.93 828.68 9.96 831.00 10.00 C 832.00 13.00 832.00 13.00 831.00 16.00 C 828.36 16.16 828.36 16.16 815.00 17.00 C 814.67 18.65 814.34 20.30 814.00 22.00 C 818.95 22.00 823.90 22.00 829.00 22.00 C 829.00 23.65 829.00 25.30 829.00 27.00 C 828.00 28.00 828.00 28.00 825.06 28.10 C 823.86 28.09 822.67 28.07 821.44 28.06 C 820.84 28.06 820.84 28.06 817.81 28.04 C 816.88 28.02 815.95 28.01 815.00 28.00 C 815.00 29.65 815.00 31.30 815.00 33.00 C 820.61 33.33 826.22 33.66 832.00 34.00 C 832.00 35.98 832.00 37.96 832.00 40.00 C 824.08 40.00 816.16 40.00 808.00 40.00 C 807.93 36.05 807.87 32.10 807.84 28.15 C 807.81 26.14 807.77 24.13 807.74 22.13 C 807.73 20.87 807.72 19.62 807.71 18.32 C 807.69 17.16 807.68 16.00 807.66 14.80 C 807.77 13.87 807.88 12.95 808.00 12.00 C 811.20 9.86 812.00 9.76 815.67 9.80 Z M 363.00 10.00 C 366.06 9.44 366.06 9.44 370.00 10.00 C 372.75 12.72 374.89 15.76 377.00 19.00 C 380.93 14.12 380.93 14.12 382.31 11.69 C 384.00 10.00 384.00 10.00 387.69 9.75 C 388.78 9.83 389.87 9.91 391.00 10.00 C 391.00 14.72 387.68 17.10 384.65 20.53 C 383.00 23.00 383.00 23.00 383.00 24.96 C 384.38 27.78 386.16 30.13 388.06 32.62 C 392.00 37.79 392.00 37.79 392.00 40.00 C 386.90 40.79 386.90 40.79 384.00 40.00 C 382.02 37.83 380.66 35.63 379.23 33.07 C 378.00 31.00 378.00 31.00 376.00 30.00 C 375.73 30.72 375.46 31.44 375.19 32.19 C 374.99 32.65 374.99 32.65 374.00 35.00 C 373.82 35.46 373.82 35.46 372.94 37.81 C 371.00 40.00 371.00 40.00 368.80 40.31 C 366.52 40.31 364.28 40.21 362.00 40.00 C 362.48 39.26 362.96 38.53 363.46 37.77 C 364.09 36.79 364.72 35.82 365.38 34.81 C 365.69 34.33 365.69 34.33 367.27 31.89 C 370.46 26.55 370.46 26.55 371.00 24.00 C 369.45 20.96 369.45 20.96 367.12 17.81 C 363.00 12.14 363.00 12.14 363.00 10.00 Z M 653.38 9.69 C 654.21 9.71 655.04 9.73 655.89 9.76 C 657.93 9.81 659.97 9.90 662.00 10.00 C 663.00 13.00 663.00 13.00 662.01 15.17 C 657.90 18.90 651.17 17.19 646.00 17.00 C 646.00 22.61 646.00 28.22 646.00 34.00 C 651.28 34.00 656.56 34.00 662.00 34.00 C 662.00 35.98 662.00 37.96 662.00 40.00 C 658.94 40.14 655.88 40.23 652.81 40.31 C 651.95 40.35 651.08 40.40 650.19 40.44 C 645.94 40.52 643.61 40.38 639.93 38.11 C 637.20 33.71 637.23 30.08 637.31 25.00 C 637.28 24.11 637.26 23.22 637.23 22.30 C 637.25 17.68 637.52 15.61 640.46 11.89 C 644.50 9.16 648.67 9.44 653.38 9.69 Z M 852.25 9.94 C 853.00 9.94 853.74 9.95 854.51 9.95 C 856.34 9.96 858.17 9.98 860.00 10.00 C 860.33 10.99 860.66 11.98 861.00 13.00 C 859.50 15.00 859.50 15.00 857.00 17.00 C 853.06 17.19 853.06 17.19 851.10 17.04 C 849.00 17.00 849.00 17.00 844.00 18.00 C 844.00 23.28 844.00 28.56 844.00 34.00 C 849.28 34.00 854.56 34.00 860.00 34.00 C 860.33 35.65 860.66 37.30 861.00 39.00 C 858.85 41.15 854.22 40.28 851.25 40.31 C 850.44 40.34 849.63 40.37 848.79 40.40 C 844.67 40.44 842.55 40.35 838.98 38.11 C 835.28 34.18 835.75 30.34 835.69 25.19 C 835.66 24.38 835.63 23.57 835.60 22.74 C 835.56 18.72 835.69 16.52 837.77 12.99 C 841.99 9.22 846.83 9.88 852.25 9.94 Z M 501.06 9.88 C 501.80 9.87 502.53 9.87 503.28 9.86 C 508.75 9.87 508.75 9.87 511.00 11.00 C 510.34 12.98 509.68 14.96 509.00 17.00 C 504.05 17.00 499.10 17.00 494.00 17.00 C 493.98 19.45 493.96 21.91 493.94 24.44 C 493.93 25.21 493.92 25.99 493.91 26.78 C 493.90 28.52 493.95 30.26 494.00 32.00 C 496.06 34.06 500.22 33.41 503.06 33.56 C 503.82 33.61 504.58 33.65 505.36 33.69 C 507.24 33.80 509.12 33.90 511.00 34.00 C 511.00 35.98 511.00 37.96 511.00 40.00 C 507.94 40.11 504.88 40.19 501.81 40.25 C 500.95 40.28 500.08 40.32 499.19 40.35 C 495.00 40.42 492.62 40.37 488.94 38.20 C 486.14 35.03 486.10 32.05 486.00 28.00 C 485.94 27.01 485.88 26.01 485.81 24.99 C 485.49 16.89 485.49 16.89 487.81 12.81 C 491.88 9.44 496.04 9.85 501.06 9.88 Z M 289.45 9.90 C 290.30 9.91 291.14 9.91 292.02 9.91 C 292.46 9.92 292.46 9.92 294.69 9.94 C 295.13 9.94 295.13 9.94 297.39 9.95 C 299.60 9.96 301.80 9.98 304.00 10.00 C 305.00 13.00 305.00 13.00 304.00 16.00 C 300.58 17.14 297.91 17.10 294.31 17.06 C 293.72 17.06 293.72 17.06 290.74 17.04 C 289.83 17.02 288.93 17.01 288.00 17.00 C 288.00 18.65 288.00 20.30 288.00 22.00 C 292.29 22.33 296.58 22.66 301.00 23.00 C 301.00 24.65 301.00 26.30 301.00 28.00 C 298.01 28.87 295.36 29.11 292.25 29.06 C 291.55 29.05 291.55 29.05 288.00 29.00 C 287.67 32.63 287.34 36.26 287.00 40.00 C 285.02 40.00 283.04 40.00 281.00 40.00 C 279.83 34.75 279.82 29.73 279.81 24.38 C 279.80 23.42 279.79 22.47 279.78 21.48 C 279.77 20.57 279.77 19.65 279.77 18.71 C 279.77 17.88 279.76 17.05 279.76 16.19 C 280.00 14.00 280.00 14.00 282.00 11.00 C 284.82 10.06 286.53 9.88 289.45 9.90 Z M 87.00 10.00 C 91.15 9.97 95.29 9.95 99.44 9.94 C 100.03 9.93 100.03 9.93 103.03 9.91 C 104.15 9.91 105.27 9.91 106.43 9.90 C 107.48 9.90 108.52 9.89 109.59 9.89 C 112.00 10.00 112.00 10.00 113.00 11.00 C 113.04 12.67 113.04 14.33 113.00 16.00 C 110.04 17.48 107.26 17.06 104.00 17.00 C 104.00 17.33 104.00 17.33 104.02 19.00 C 104.04 21.98 104.05 24.96 104.06 27.94 C 104.07 28.98 104.08 30.02 104.09 31.09 C 104.09 31.59 104.09 31.59 104.10 34.09 C 104.10 34.55 104.10 34.55 104.11 36.87 C 104.00 39.00 104.00 39.00 103.00 40.00 C 100.00 40.12 100.00 40.12 97.00 40.00 C 96.00 39.00 96.00 39.00 95.89 36.78 C 95.89 35.82 95.90 34.86 95.90 33.87 C 95.91 32.84 95.91 31.80 95.91 30.74 C 95.92 29.65 95.93 28.56 95.94 27.44 C 95.94 26.35 95.95 25.25 95.95 24.13 C 95.96 21.42 95.98 18.71 96.00 16.00 C 94.52 16.16 94.52 16.16 87.00 17.00 C 87.00 14.69 87.00 12.38 87.00 10.00 Z M 183.53 9.87 C 184.65 9.87 185.77 9.86 186.93 9.86 C 188.11 9.87 189.28 9.87 190.50 9.88 C 191.09 9.87 191.09 9.87 194.07 9.86 C 194.63 9.86 194.63 9.86 197.47 9.87 C 198.50 9.87 199.54 9.87 200.61 9.87 C 203.00 10.00 203.00 10.00 204.00 11.00 C 204.04 12.67 204.04 14.33 204.00 16.00 C 200.06 16.81 198.00 17.00 194.00 16.00 C 194.00 23.92 194.00 31.84 194.00 40.00 C 191.69 40.00 189.38 40.00 187.00 40.00 C 186.67 32.41 186.34 24.82 186.00 17.00 C 183.03 16.67 180.06 16.34 177.00 16.00 C 176.96 14.33 176.96 12.67 177.00 11.00 C 178.75 9.25 181.16 9.87 183.53 9.87 Z M 309.00 10.00 C 310.98 10.00 312.96 10.00 315.00 10.00 C 315.33 17.59 315.66 25.18 316.00 33.00 C 321.28 33.33 326.56 33.66 332.00 34.00 C 332.00 35.65 332.00 37.30 332.00 39.00 C 331.00 40.00 331.00 40.00 328.78 40.11 C 327.82 40.11 326.86 40.10 325.87 40.10 C 325.35 40.10 325.35 40.10 322.74 40.09 C 321.65 40.08 320.56 40.07 319.44 40.06 C 318.89 40.06 318.89 40.06 316.13 40.05 C 313.42 40.04 310.71 40.02 308.00 40.00 C 307.98 35.89 307.96 31.78 307.95 27.66 C 307.94 26.27 307.93 24.87 307.92 23.47 C 307.91 21.46 307.91 19.45 307.90 17.44 C 307.90 16.23 307.89 15.02 307.89 13.78 C 308.00 11.00 308.00 11.00 309.00 10.00 Z M 677.31 15.73 C 677.76 15.74 677.76 15.74 680.00 15.75 C 680.89 15.74 681.77 15.74 682.69 15.73 C 685.00 16.00 685.00 16.00 687.00 18.00 C 687.23 21.19 687.23 21.19 687.19 25.00 C 687.18 25.63 687.18 25.63 687.17 28.81 C 687.00 32.00 687.00 32.00 686.00 34.00 C 684.21 34.05 682.42 34.09 680.62 34.12 C 679.63 34.15 678.63 34.17 677.60 34.20 C 675.00 34.00 675.00 34.00 673.00 32.00 C 672.73 28.81 672.73 28.81 672.75 25.00 C 672.74 23.74 672.74 22.48 672.73 21.19 C 673.04 17.47 673.47 16.18 677.31 15.73 Z M 934.94 15.81 C 935.83 15.80 936.73 15.78 937.65 15.77 C 940.00 16.00 940.00 16.00 942.00 18.00 C 942.23 21.19 942.23 21.19 942.19 25.00 C 942.18 25.63 942.18 25.63 942.17 28.81 C 942.00 32.00 942.00 32.00 941.00 34.00 C 937.04 34.00 933.08 34.00 929.00 34.00 C 928.97 31.19 928.95 28.38 928.94 25.56 C 928.93 25.16 928.93 25.16 928.91 23.13 C 928.90 21.09 928.95 19.04 929.00 17.00 C 930.67 15.33 932.66 15.83 934.94 15.81 Z M 557.21 15.87 C 558.11 15.87 559.01 15.87 559.94 15.88 C 560.83 15.87 561.73 15.87 562.65 15.87 C 565.00 16.00 565.00 16.00 567.00 17.00 C 567.03 19.65 567.05 22.29 567.06 24.94 C 567.07 25.69 567.08 26.45 567.09 27.22 C 567.10 29.15 567.05 31.08 567.00 33.00 C 566.00 34.00 566.00 34.00 563.53 34.13 C 563.03 34.13 563.03 34.13 560.50 34.12 C 559.50 34.13 558.50 34.13 557.47 34.13 C 555.00 34.00 555.00 34.00 554.00 33.00 C 553.90 30.32 553.86 27.68 553.88 25.00 C 553.87 24.25 553.87 23.50 553.86 22.73 C 553.88 16.07 553.88 16.07 557.21 15.87 Z M 739.00 16.00 C 740.61 15.96 742.22 15.92 743.88 15.88 C 744.78 15.85 745.68 15.83 746.62 15.80 C 749.00 16.00 749.00 16.00 751.00 18.00 C 752.14 22.98 752.36 28.06 751.00 33.00 C 748.48 34.26 746.69 34.10 743.88 34.06 C 742.27 34.04 740.66 34.02 739.00 34.00 C 739.00 28.06 739.00 22.12 739.00 16.00 Z M 474.00 10.00 C 475.98 10.00 477.96 10.00 480.00 10.00 C 481.00 11.00 481.00 11.00 481.11 13.78 C 481.11 14.99 481.10 16.20 481.10 17.44 C 481.09 18.75 481.09 20.05 481.09 21.40 C 481.08 22.79 481.07 24.17 481.06 25.56 C 481.06 26.96 481.05 28.35 481.05 29.74 C 481.04 33.16 481.02 36.58 481.00 40.00 C 478.69 40.00 476.38 40.00 474.00 40.00 C 474.00 30.10 474.00 20.20 474.00 10.00 Z M 783.00 16.00 C 784.61 15.96 786.22 15.92 787.88 15.88 C 788.78 15.85 789.68 15.83 790.62 15.80 C 793.00 16.00 793.00 16.00 795.00 18.00 C 795.23 21.19 795.23 21.19 795.19 25.00 C 795.18 25.63 795.18 25.63 795.17 28.81 C 795.00 32.00 795.00 32.00 794.00 34.00 C 790.37 34.00 786.74 34.00 783.00 34.00 C 783.00 28.06 783.00 22.12 783.00 16.00 Z M 912.50 9.88 C 915.00 10.00 915.00 10.00 916.00 11.00 C 916.09 13.15 916.11 15.29 916.10 17.44 C 916.09 18.75 916.09 20.05 916.09 21.40 C 916.08 22.79 916.07 24.17 916.06 25.56 C 916.06 26.96 916.05 28.35 916.05 29.74 C 916.04 33.16 916.02 36.58 916.00 40.00 C 913.69 40.00 911.38 40.00 909.00 40.00 C 908.98 35.89 908.96 31.78 908.95 27.66 C 908.94 26.27 908.93 24.87 908.92 23.47 C 908.91 21.46 908.91 19.45 908.90 17.44 C 908.90 16.23 908.89 15.02 908.89 13.78 C 909.04 10.05 909.04 10.05 912.50 9.88 Z M 868.50 9.88 C 871.00 10.00 871.00 10.00 872.00 11.00 C 872.09 13.15 872.11 15.29 872.10 17.44 C 872.09 18.75 872.09 20.05 872.09 21.40 C 872.08 22.79 872.07 24.17 872.06 25.56 C 872.06 26.96 872.05 28.35 872.05 29.74 C 872.04 33.16 872.02 36.58 872.00 40.00 C 869.69 40.00 867.38 40.00 865.00 40.00 C 864.98 35.89 864.96 31.78 864.95 27.66 C 864.94 26.27 864.93 24.87 864.92 23.47 C 864.91 21.46 864.91 19.45 864.90 17.44 C 864.90 16.23 864.89 15.02 864.89 13.78 C 865.04 10.05 865.04 10.05 868.50 9.88 Z M 17.06 9.94 C 17.55 9.95 17.55 9.95 20.00 10.00 C 20.17 14.11 20.33 18.22 20.48 22.34 C 20.54 23.74 20.59 25.13 20.65 26.53 C 20.73 28.54 20.80 30.55 20.88 32.56 C 20.93 33.77 20.97 34.98 21.02 36.22 C 21.00 39.00 21.00 39.00 20.00 40.00 C 17.00 40.12 17.00 40.12 14.00 40.00 C 12.17 38.17 12.87 35.27 12.87 32.81 C 12.87 31.56 12.86 30.30 12.86 29.01 C 12.87 28.35 12.87 27.69 12.87 27.02 C 12.87 25.01 12.87 23.00 12.86 20.99 C 12.86 19.74 12.87 18.48 12.87 17.19 C 12.87 16.61 12.87 16.61 12.87 13.67 C 13.06 9.85 13.19 10.02 17.06 9.94 Z M 413.50 18.75 C 417.00 19.00 417.00 19.00 419.00 21.00 C 419.55 27.05 419.55 27.05 417.88 29.94 C 415.08 31.52 413.15 31.46 410.00 31.00 C 408.06 29.38 408.06 29.38 407.00 27.00 C 407.32 21.73 407.83 19.16 413.50 18.75 Z M 523.00 16.00 C 524.44 15.95 525.87 15.91 527.31 15.88 C 528.11 15.85 528.91 15.83 529.74 15.80 C 532.00 16.00 532.00 16.00 535.00 18.00 C 534.12 22.88 534.12 22.88 533.00 24.00 C 531.31 24.07 529.62 24.08 527.94 24.06 C 527.02 24.05 526.10 24.04 525.15 24.04 C 524.44 24.02 523.73 24.01 523.00 24.00 C 523.00 21.36 523.00 18.72 523.00 16.00 Z M 227.00 16.00 C 228.62 15.95 230.25 15.91 231.88 15.88 C 232.78 15.85 233.68 15.83 234.62 15.80 C 237.00 16.00 237.00 16.00 239.00 18.00 C 238.44 22.56 238.44 22.56 237.00 24.00 C 235.31 24.07 233.62 24.08 231.94 24.06 C 231.02 24.05 230.10 24.04 229.15 24.04 C 228.44 24.02 227.73 24.01 227.00 24.00 C 227.00 21.36 227.00 18.72 227.00 16.00 Z M 126.00 17.00 C 129.77 20.77 129.91 22.90 131.00 28.00 C 128.36 28.00 125.72 28.00 123.00 28.00 C 123.99 24.37 124.98 20.74 126.00 17.00 Z" fill="#FFFFFF" fill-rule="evenodd" opacity="0.98" />
+  </g>
+  </g>
+</svg>
