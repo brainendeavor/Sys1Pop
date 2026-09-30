@@ -50,6 +50,10 @@ fn verify_admin_auth(req: &Request, env: &Env) -> Result<Option<Response>> {
 
 #[event(fetch)]
 pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response> {
+    std::panic::set_hook(Box::new(|info| {
+        worker::console_error!("Sys1Pop Panic: {}", info);
+    }));
+
     let method = req.method();
     let path = req.path();
 
@@ -64,7 +68,7 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
 
             if enable_ui {
                 let html = include_str!("../ui/index.html");
-                let mut headers = Headers::new();
+                let headers = Headers::new();
                 let _ = headers.set("Content-Type", "text/html; charset=utf-8");
                 let _ = headers.set("Cache-Control", "no-cache");
                 return Response::ok(html).map(|r| r.with_headers(headers));
@@ -83,6 +87,41 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
                 },
                 "hint": "Set ENABLE_UI=true in wrangler.toml or Cloudflare environment variables to activate the interactive test playground."
             }))
+        }
+        (Method::Get, "/sys1pop_robot_blowing_bubbles.svg") | (Method::Get, "/ui/sys1pop_robot_blowing_bubbles.svg") => {
+            let svg = include_str!("../ui/sys1pop_robot_blowing_bubbles.svg");
+            let headers = Headers::new();
+            let _ = headers.set("Content-Type", "image/svg+xml");
+            let _ = headers.set("Cache-Control", "public, max-age=86400");
+            Response::ok(svg).map(|r| r.with_headers(headers))
+        }
+        (Method::Get, "/sys1pop_wordmark_nixie.svg") | (Method::Get, "/ui/sys1pop_wordmark_nixie.svg") => {
+            let svg = include_str!("../ui/sys1pop_wordmark_nixie.svg");
+            let headers = Headers::new();
+            let _ = headers.set("Content-Type", "image/svg+xml");
+            let _ = headers.set("Cache-Control", "public, max-age=86400");
+            Response::ok(svg).map(|r| r.with_headers(headers))
+        }
+        (Method::Get, "/sys1pop_wordmark_nixie_dark.svg") | (Method::Get, "/ui/sys1pop_wordmark_nixie_dark.svg") => {
+            let svg = include_str!("../ui/sys1pop_wordmark_nixie_dark.svg");
+            let headers = Headers::new();
+            let _ = headers.set("Content-Type", "image/svg+xml");
+            let _ = headers.set("Cache-Control", "public, max-age=86400");
+            Response::ok(svg).map(|r| r.with_headers(headers))
+        }
+        (Method::Get, "/sys1pop_banner_dark_pure.svg") | (Method::Get, "/ui/sys1pop_banner_dark_pure.svg") => {
+            let svg = include_str!("../ui/sys1pop_banner_dark_pure.svg");
+            let headers = Headers::new();
+            let _ = headers.set("Content-Type", "image/svg+xml");
+            let _ = headers.set("Cache-Control", "public, max-age=86400");
+            Response::ok(svg).map(|r| r.with_headers(headers))
+        }
+        (Method::Get, "/favicon.ico") | (Method::Get, "/favicon.png") => {
+            let bytes = include_bytes!("../ui/favicon.png");
+            let headers = Headers::new();
+            let _ = headers.set("Content-Type", "image/png");
+            let _ = headers.set("Cache-Control", "public, max-age=86400");
+            Response::from_bytes(bytes.to_vec()).map(|r| r.with_headers(headers))
         }
         (Method::Get, "/health") => {
             let registry = get_or_init_registry();
@@ -149,11 +188,17 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
             }
 
             let model_id = body.model.as_deref().unwrap_or("sys1-base");
+            worker::console_log!("Resolving engine for model: {}", model_id);
             let registry = get_or_init_registry();
             let engine = registry.get_or_load(model_id, &env).await?;
 
+            worker::console_log!("Executing decision on engine for model: {}", model_id);
             let response = engine.execute(body.clone())
-                .map_err(|e| worker::Error::RustError(e.to_string()))?;
+                .map_err(|e| {
+                    worker::console_error!("Engine execute error: {}", e);
+                    worker::Error::RustError(e.to_string())
+                })?;
+            worker::console_log!("Decision execution completed successfully!");
 
             // Store in in-isolate LRU cache
             cache.insert(&body, &response);

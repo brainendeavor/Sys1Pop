@@ -17,11 +17,8 @@ impl Default for ModelRegistry {
 
 impl ModelRegistry {
     pub fn new() -> Self {
-        let mut engines = HashMap::new();
-        // Warm default backbone in isolate memory on startup
-        engines.insert("sys1-base".to_string(), Arc::new(Sys1Engine::new("sys1-base")));
         Self {
-            engines: Mutex::new(engines),
+            engines: Mutex::new(HashMap::new()),
         }
     }
 
@@ -34,26 +31,40 @@ impl ModelRegistry {
             }
         }
 
-        // Dynamic path: Attempt streaming weights/manifest from Cloudflare R2
+        // Dynamic path: Attempt streaming weights and tokenizer from Cloudflare R2
         if let Ok(bucket) = env.bucket("MODELS") {
-            let manifest_key = format!("models/{model_id}/manifest.json");
-            
-            // Check if model exists in R2
-            if let Ok(Some(_obj)) = bucket.get(&manifest_key).execute().await {
-                let new_engine = Arc::new(Sys1Engine::new(model_id));
-                if let Ok(mut guard) = self.engines.lock() {
-                    guard.insert(model_id.to_string(), Arc::clone(&new_engine));
+            let safetensors_key = format!("models/{model_id}/model.safetensors");
+            let config_key = format!("models/{model_id}/config.json");
+            let tokenizer_key = format!("models/{model_id}/tokenizer.json");
+
+            let st_opt = bucket.get(&safetensors_key).execute().await.ok().flatten();
+            let cfg_opt = bucket.get(&config_key).execute().await.ok().flatten();
+            let tok_opt = bucket.get(&tokenizer_key).execute().await.ok().flatten();
+
+            if let (Some(st_obj), Some(cfg_obj), Some(tok_obj)) = (st_opt, cfg_opt, tok_opt) {
+                if let (Some(st_body), Some(cfg_body), Some(tok_body)) = (st_obj.body(), cfg_obj.body(), tok_obj.body()) {
+                    if let (Ok(st_bytes), Ok(cfg_bytes), Ok(tok_bytes)) = (
+                        st_body.bytes().await,
+                        cfg_body.bytes().await,
+                        tok_body.bytes().await,
+                    ) {
+                        let engine = Sys1Engine::from_bundle(model_id, st_bytes, &cfg_bytes, &tok_bytes)
+                            .map_err(|e| worker::Error::RustError(e.to_string()))?;
+                        let engine_arc = Arc::new(engine);
+                        if let Ok(mut guard) = self.engines.lock() {
+                            guard.insert(model_id.to_string(), Arc::clone(&engine_arc));
+                        }
+                        return Ok(engine_arc);
+                    }
                 }
-                return Ok(new_engine);
             }
         }
 
-        // Fallback: If not found in R2, load a default engine with requested ID
-        let fallback_engine = Arc::new(Sys1Engine::new(model_id));
-        if let Ok(mut guard) = self.engines.lock() {
-            guard.insert(model_id.to_string(), Arc::clone(&fallback_engine));
-        }
-        Ok(fallback_engine)
+        // Missing from R2: Return explicit error instead of silent mock fallback
+        Err(worker::Error::RustError(format!(
+            "Model '{}' not found in R2 bucket 'MODELS'. Ensure model bundle (model.safetensors, config.json, tokenizer.json) is published.",
+            model_id
+        )))
     }
 
     /// Evicts a model from warm isolate RAM
@@ -170,6 +181,10 @@ impl ModelRegistry {
                             "state": "Site: example.com | Name: Alex Taylor | Email: alex.marketing@example.com | Message: Hello team, I noticed your website has great content but low Google ranking. We offer high-quality backlinks and guest posts with DA 80+ to get you to #1 on search engines. Contact my handle: @example_marketer"
                         },
                         {
+                            "label": "🧹 Cold Outreach / BDR",
+                            "state": "Site: example.com | Name: Taylor Reed | Email: taylor.reed@example-facility-services.com | Message: Hi, I work in the local metro area, and help many local companies. I was hoping I could come by and offer a complimentary cleaning bid? Thank you in advance for your response. All the best, Taylor Reed Business Development Rep Apex Facility Services taylor.reed@example-facility-services.com Respond with stop to optout."
+                        },
+                        {
                             "label": "✅ Clean Inquiry",
                             "state": "Site: example.com | Name: Dr. Jane Doe | Email: jane.doe@example.com | Message: Hello, I would like to schedule a technical briefing on deploying Sys1Pop across our global edge points of presence."
                         }
@@ -273,9 +288,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_model_registry_warm_default() {
+    fn test_model_registry_initial_state() {
         let registry = ModelRegistry::new();
         let models = registry.loaded_models();
-        assert!(models.contains(&"sys1-base".to_string()));
+        assert!(models.is_empty());
     }
 }
