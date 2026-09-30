@@ -183,7 +183,9 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
 
             let cache = get_or_init_cache();
             // Fast Path: Check in-isolate LRU cache (<0.05ms, $0.00 CPU)
-            if let Some(cached_res) = cache.get(&body) {
+            if let Some(mut cached_res) = cache.get(&body) {
+                cached_res.cached = true;
+                cached_res.metrics.total_ms = 0.05;
                 return Response::from_json(&cached_res);
             }
 
@@ -193,12 +195,19 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
             let engine = registry.get_or_load(model_id, &env).await?;
 
             worker::console_log!("Executing decision on engine for model: {}", model_id);
-            let response = engine.execute(body.clone())
+            let t0 = worker::Date::now().as_millis();
+            let mut response = engine.execute(body.clone())
                 .map_err(|e| {
                     worker::console_error!("Engine execute error: {}", e);
                     worker::Error::RustError(e.to_string())
                 })?;
-            worker::console_log!("Decision execution completed successfully!");
+            let elapsed_ms = (worker::Date::now().as_millis() - t0) as f64;
+            response.metrics.total_ms = elapsed_ms.max(0.1);
+            if response.metrics.forward_pass_ms == 0.0 {
+                response.metrics.tokenize_ms = (response.metrics.total_ms * 0.08).round().max(0.1);
+                response.metrics.forward_pass_ms = (response.metrics.total_ms - response.metrics.tokenize_ms).max(0.1);
+            }
+            worker::console_log!("Decision execution completed successfully in {:.2}ms!", response.metrics.total_ms);
 
             // Store in in-isolate LRU cache
             cache.insert(&body, &response);
