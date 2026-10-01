@@ -7,6 +7,8 @@ set -euo pipefail
 
 PORT=6061
 DIST_DIR="./dist/models"
+SECURE_DECIDE_API="false"
+API_TOKEN=""
 
 print_help() {
   cat << EOF
@@ -17,11 +19,14 @@ USAGE:
 
 OPTIONS:
   --port <number>       Local dev server port (default: 6061)
+  --secure-decide-api   Enforce API_TOKEN authentication on /v1/decide
+  --api-token <token>   Secret API_TOKEN value to configure in dev environment
   --help, -h            Show this help message
 
 EXAMPLES:
   ./scripts/dev.sh
   ./scripts/dev.sh --port 5751
+  ./scripts/dev.sh --api-token "dev-secret" --secure-decide-api
 EOF
 }
 
@@ -29,6 +34,14 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --port)
       PORT="$2"
+      shift 2
+      ;;
+    --secure-decide-api|--secure-all-apis)
+      SECURE_DECIDE_API="true"
+      shift
+      ;;
+    --api-token)
+      API_TOKEN="$2"
       shift 2
       ;;
     -h|--help)
@@ -46,9 +59,10 @@ done
 echo ""
 echo "🚀 ========================================================"
 echo "   Sys1Pop Local Development Server"
-echo "   UI Mode:     Enabled (ENABLE_UI=true)"
-echo "   Local Port:  $PORT"
-echo "   Local URL:   http://localhost:$PORT"
+echo "   UI Mode:             Enabled (ENABLE_UI=true)"
+echo "   Secure /decide API:  $SECURE_DECIDE_API"
+echo "   Local Port:          $PORT"
+echo "   Local URL:           http://localhost:$PORT"
 echo "=========================================================="
 echo ""
 
@@ -78,4 +92,14 @@ echo "👉 Open http://localhost:$PORT in your browser to kick the tires!"
 echo ""
 
 export ENABLE_UI="true"
-exec npx wrangler dev --port "$PORT" --var ENABLE_UI:true
+DEV_CMD=("npx" "wrangler" "dev" "--port" "$PORT" "--var" "ENABLE_UI:true")
+
+if [[ "$SECURE_DECIDE_API" == "true" ]]; then
+  DEV_CMD+=("--var" "SECURE_DECIDE_API:true")
+fi
+
+if [[ -n "$API_TOKEN" ]]; then
+  DEV_CMD+=("--var" "API_TOKEN:${API_TOKEN}")
+fi
+
+exec "${DEV_CMD[@]}"

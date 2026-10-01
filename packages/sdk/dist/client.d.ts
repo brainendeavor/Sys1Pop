@@ -9,6 +9,7 @@ export interface Sys1PopOptions {
     endpoint?: string;
     binding?: ServiceBinding;
     headers?: Record<string, string>;
+    token?: string;
 }
 export type Sys1PopTarget = ServiceBinding | string | Sys1PopOptions | undefined | null;
 export declare class Sys1PopNotConfiguredError extends Error {

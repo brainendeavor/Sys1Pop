@@ -7,6 +7,7 @@ set -euo pipefail
 
 ENABLE_UI="true"
 API_TOKEN=""
+SECURE_DECIDE_API="false"
 CF_ENV=""
 EXTRA_ARGS=()
 
@@ -20,13 +21,15 @@ USAGE:
 OPTIONS:
   --enable-ui             Enable embedded Kick the Tires interactive UI (default)
   --disable-ui            Deploy as headless API microservice without UI
-  --api-token <token>     Configure API_TOKEN for protected lifecycle endpoints
+  --api-token <token>     Configure API_TOKEN for protected lifecycle and decision endpoints
+  --secure-decide-api     Enforce API_TOKEN on /v1/decide inference route
   --env <name>            Target Cloudflare environment (e.g., staging, production)
   --help, -h              Show this help message
 
 EXAMPLES:
   ./scripts/deploy-worker.sh
   ./scripts/deploy-worker.sh --disable-ui
+  ./scripts/deploy-worker.sh --api-token "my-secret-token" --secure-decide-api
   ./scripts/deploy-worker.sh --api-token "my-secret-token" --env production
 EOF
 }
@@ -44,6 +47,10 @@ while [[ $# -gt 0 ]]; do
     --api-token)
       API_TOKEN="$2"
       shift 2
+      ;;
+    --secure-decide-api|--secure-all-apis)
+      SECURE_DECIDE_API="true"
+      shift
       ;;
     --env)
       CF_ENV="$2"
@@ -63,10 +70,11 @@ done
 echo ""
 echo "🚀 ========================================================"
 echo "   Sys1Pop Worker Deployment"
-echo "   UI Enabled:    $ENABLE_UI"
-echo "   SIMD128 Flags: +simd128 (wasm32-unknown-unknown)"
+echo "   UI Enabled:          $ENABLE_UI"
+echo "   Secure /decide API:  $SECURE_DECIDE_API"
+echo "   SIMD128 Flags:       +simd128 (wasm32-unknown-unknown)"
 if [[ -n "$CF_ENV" ]]; then
-  echo "   Environment:   $CF_ENV"
+  echo "   Environment:         $CF_ENV"
 fi
 echo "=========================================================="
 echo ""
@@ -99,6 +107,10 @@ mkdir -p build && cp -R crates/sys1pop-worker/build/ build/
 
 # 3. Construct Wrangler Deploy command
 DEPLOY_CMD=("npx" "wrangler" "deploy" "--var" "ENABLE_UI:${ENABLE_UI}")
+
+if [[ "$SECURE_DECIDE_API" == "true" ]]; then
+  DEPLOY_CMD+=("--var" "SECURE_DECIDE_API:true")
+fi
 
 if [[ -n "$API_TOKEN" ]]; then
   DEPLOY_CMD+=("--var" "API_TOKEN:${API_TOKEN}")

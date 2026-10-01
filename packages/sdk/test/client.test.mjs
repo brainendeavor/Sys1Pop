@@ -108,3 +108,33 @@ test("Sys1Pop SDK handles unconfigured graceful degradation", async () => {
     }
   );
 });
+
+test("Sys1Pop SDK attaches Authorization Bearer header when token option is provided", async () => {
+  let capturedHeaders = null;
+
+  const mockServiceBinding = {
+    async fetch(url, init) {
+      capturedHeaders = init.headers;
+      return new Response(
+        JSON.stringify({
+          decisions: {},
+          metrics: { tokenize_ms: 1.0, forward_pass_ms: 10.0, total_ms: 11.0 },
+          cached: false,
+          model_id: "sys1-base",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    },
+  };
+
+  const sys1 = new Sys1Pop({
+    binding: mockServiceBinding,
+    token: "secret_sys1_token_xyz",
+  });
+
+  assert.equal(sys1.isConfigured(), true);
+  await sys1.decide({ state: "test query" });
+
+  assert.equal(capturedHeaders["Authorization"], "Bearer secret_sys1_token_xyz");
+});
+

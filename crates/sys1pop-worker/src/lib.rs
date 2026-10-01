@@ -1,6 +1,8 @@
+pub mod auth;
 pub mod cache;
 pub mod loader;
 
+use auth::{get_env_var_trimmed, is_truthy, verify_admin_auth, verify_decide_auth};
 use cache::DecisionCache;
 use loader::ModelRegistry;
 use sys1pop_core::contract::DecisionRequest;
@@ -18,36 +20,6 @@ pub fn get_or_init_registry() -> &'static ModelRegistry {
     REGISTRY.get_or_init(ModelRegistry::default)
 }
 
-fn verify_admin_auth(req: &Request, env: &Env) -> Result<Option<Response>> {
-    // Check if admin API is explicitly disabled
-    if let Ok(enabled_var) = env.var("ENABLE_ADMIN_API") {
-        let val = enabled_var.to_string().to_lowercase();
-        if val == "false" || val == "0" || val == "no" {
-            return Ok(Some(Response::error("Admin lifecycle API is disabled", 403)?));
-        }
-    }
-
-    // Check API_TOKEN if configured
-    if let Ok(expected_token) = env.var("API_TOKEN").or_else(|_| env.secret("API_TOKEN")) {
-        let expected = expected_token.to_string();
-        if !expected.is_empty() {
-            let headers = req.headers();
-            let auth_header = headers.get("Authorization").ok().flatten();
-            let x_token = headers.get("X-API-Token").ok().flatten();
-
-            let token = auth_header
-                .and_then(|h| h.strip_prefix("Bearer ").map(|s| s.to_string()))
-                .or(x_token);
-
-            match token {
-                Some(t) if t == expected => (),
-                _ => return Ok(Some(Response::error("Unauthorized: Invalid or missing API token", 401)?)),
-            }
-        }
-    }
-    Ok(None)
-}
-
 #[event(fetch)]
 pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response> {
     std::panic::set_hook(Box::new(|info| {
@@ -58,12 +30,20 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
     let path = req.path();
 
     match (method, path.as_str()) {
+        (Method::Options, _) => {
+            let headers = Headers::new();
+            let _ = headers.set("Access-Control-Allow-Origin", "*");
+            let _ = headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            let _ = headers.set(
+                "Access-Control-Allow-Headers",
+                "Content-Type, Authorization, X-API-Token",
+            );
+            let _ = headers.set("Access-Control-Max-Age", "86400");
+            Response::empty().map(|r| r.with_headers(headers))
+        }
         (Method::Get, "/") | (Method::Get, "/ui") => {
-            let enable_ui = env.var("ENABLE_UI")
-                .map(|v| {
-                    let val = v.to_string().to_lowercase();
-                    val == "true" || val == "1" || val == "yes" || val == "on"
-                })
+            let enable_ui = get_env_var_trimmed(&env, "ENABLE_UI")
+                .map(|v| is_truthy(&v))
                 .unwrap_or(false);
 
             if enable_ui {
@@ -176,6 +156,9 @@ pub async fn main(mut req: Request, env: Env, _ctx: Context) -> Result<Response>
             }))
         }
         (Method::Post, "/v1/decide") => {
+            if let Some(err_resp) = verify_decide_auth(&req, &env)? {
+                return Ok(err_resp);
+            }
             let body: DecisionRequest = match req.json().await {
                 Ok(b) => b,
                 Err(err) => return Response::error(format!("Invalid JSON request: {err}"), 400),

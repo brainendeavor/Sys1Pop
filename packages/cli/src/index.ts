@@ -23,8 +23,13 @@ COMMANDS:
 
 OPTIONS:
   --endpoint <url>          Sys1Pop worker endpoint (default: http://localhost:6061)
+  --token, --api-token <t>  Configure or pass API_TOKEN for authenticated API routes
+  --secure-decide-api       Deploy worker with SECURE_DECIDE_API=true (secures /v1/decide)
+  --disable-ui              Deploy as headless API microservice without UI
   --name <model-id>         Override model ID for push/test
-  --bucket <name>           Cloudflare R2 bucket name (default: sys1-models)
+  --models <list>           Specify models to deploy (e.g. spam-detector-v1,sys1-base)
+  --prune                   Remove models not specified from R2 bucket and catalog
+  --bucket <name>           Cloudflare R2 bucket name (default: sys1pop-models)
   --help, -h                Show this help message
   --version, -v             Show CLI version
 
@@ -62,10 +67,12 @@ function parseArgs(args: string[]) {
 
 async function handleDeploy(flags: Record<string, string | boolean>) {
   const enableUi = flags["disable-ui"] ? "false" : "true";
-  const apiToken = (flags["api-token"] as string) || "";
-  console.log(`\n🚀 Building and deploying Sys1Pop Worker with SIMD128 vector acceleration (UI: ${enableUi})...`);
+  const secureDecide = flags["secure-decide-api"] || flags["secure-all-apis"] || flags["require-auth"] ? "true" : "false";
+  const apiToken = (flags["api-token"] as string) || (flags["token"] as string) || "";
+  console.log(`\n🚀 Building and deploying Sys1Pop Worker with SIMD128 vector acceleration (UI: ${enableUi}, Secure Decide API: ${secureDecide})...`);
   try {
     let cmd = `npx wrangler deploy --var ENABLE_UI:${enableUi}`;
+    if (secureDecide === "true") cmd += ` --var SECURE_DECIDE_API:true`;
     if (apiToken) cmd += ` --var API_TOKEN:${apiToken}`;
     if (flags.env) cmd += ` --env ${flags.env}`;
     execSync(cmd, { stdio: "inherit" });
@@ -119,7 +126,7 @@ async function handleModelPush(bundleDir: string, flags: Record<string, string |
   try {
     const { modelId } = validateModelBundle(bundleDir);
     const targetModelId = (flags.name as string) || modelId;
-    const bucket = (flags.bucket as string) || "sys1-models";
+    const bucket = (flags.bucket as string) || "sys1pop-models";
 
     console.log(`\n📦 Uploading model '${targetModelId}' to Cloudflare R2 bucket '${bucket}'...`);
     const files = ["manifest.json", "model.safetensors", "tokenizer.json", "config.json"];
@@ -146,7 +153,7 @@ async function handleModelPush(bundleDir: string, flags: Record<string, string |
 }
 
 async function handleSeedCatalog(flags: Record<string, string | boolean>) {
-  const bucket = (flags.bucket as string) || "sys1-models";
+  const bucket = (flags.bucket as string) || "sys1pop-models";
   console.log(`\n🌱 Seeding foundation models to Cloudflare R2 bucket '${bucket}'...`);
 
   const foundationModels = [
@@ -165,7 +172,8 @@ async function handleSeedCatalog(flags: Record<string, string | boolean>) {
 
 async function handleModelList(flags: Record<string, string | boolean>) {
   const endpoint = (flags.endpoint as string) || "http://localhost:6061";
-  const sys1 = new Sys1Pop(endpoint);
+  const token = (flags.token as string) || (flags["api-token"] as string) || process.env.API_TOKEN || "";
+  const sys1 = new Sys1Pop({ endpoint, token });
 
   try {
     console.log(`\n🔍 Querying active models from Sys1Pop at ${endpoint}...`);
@@ -184,7 +192,8 @@ async function handleModelList(flags: Record<string, string | boolean>) {
 
 async function handleModelTest(modelId: string, flags: Record<string, string | boolean>) {
   const endpoint = (flags.endpoint as string) || "http://localhost:6061";
-  const sys1 = new Sys1Pop(endpoint);
+  const token = (flags.token as string) || (flags["api-token"] as string) || process.env.API_TOKEN || "";
+  const sys1 = new Sys1Pop({ endpoint, token });
 
   console.log(`\n🧪 Testing live edge inference for model '${modelId}' at ${endpoint}...`);
 
@@ -259,9 +268,11 @@ async function handleModelUnload(modelId: string, flags: Record<string, string |
 }
 
 async function handleDeployExamples(flags: Record<string, string | boolean>) {
-  const bucket = (flags.bucket as string) || "sys1-models";
+  const bucket = (flags.bucket as string) || "sys1pop-models";
   let cmd = `./scripts/deploy-models.sh --bucket ${bucket}`;
+  if (flags.models) cmd += ` --models "${flags.models}"`;
   if (flags.endpoint) cmd += ` --endpoint ${flags.endpoint}`;
+  if (flags.prune) cmd += ` --prune`;
   execSync(cmd, { stdio: "inherit" });
 }
 

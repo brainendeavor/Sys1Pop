@@ -130,6 +130,45 @@ curl -X POST http://localhost:6061/v1/decide \
 
 ---
 
+## Security & Authentication
+
+Sys1Pop provides flexible token-based authentication and lifecycle access controls via Cloudflare Worker environment variables or secrets:
+
+| Environment Variable | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **`API_TOKEN`** | Secret / Var | `""` | Secret token required for authenticated requests. Accepted via `Authorization: Bearer <token>` or `X-API-Token: <token>`. |
+| **`SECURE_DECIDE_API`** | Var | `false` | When set to `true`, **expands `API_TOKEN` authentication to secure the `/v1/decide` inference route** for production deployment. |
+| **`ENABLE_ADMIN_API`** | Var | `true` | When set to `false`, completely disables admin lifecycle APIs (`/v1/models/unload`, `/v1/cache/clear`) with HTTP 403 Forbidden. |
+| **`ENABLE_UI`** | Var | `false` | Enables embedded Kick the Tires interactive testing studio at `/` and `/ui`. Secured by disabling it in production. |
+
+### Authenticating Requests
+When `SECURE_DECIDE_API=true`, decision requests must include the token:
+```bash
+curl -X POST https://sys1pop.your-domain.workers.dev/v1/decide \
+  -H "Authorization: Bearer my-secret-token" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"sys1-base","state":"Status check","questions":[{"id":"ok","type":"boolean"}]}'
+```
+
+Using the `@sys1pop/sdk`:
+```typescript
+import { Sys1Pop } from "@sys1pop/sdk";
+
+// Direct HTTP endpoint with token authentication:
+const sys1 = new Sys1Pop({
+  endpoint: "https://sys1pop.your-domain.workers.dev",
+  token: process.env.API_TOKEN,
+});
+
+// Or Cloudflare Worker Service Binding with token:
+const sys1 = new Sys1Pop({
+  binding: env.SYS1POP,
+  token: env.SYS1POP_API_TOKEN,
+});
+```
+
+---
+
 ## License
 
 Sys1Pop is dual-licensed under:

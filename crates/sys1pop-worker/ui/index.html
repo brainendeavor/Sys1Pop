@@ -553,6 +553,7 @@
         loading: false,
         showTokenModal: false,
         adminToken: localStorage.getItem("sys1_admin_token") || "",
+        authError: false,
         
         request: {
           model: first.model_id,
@@ -587,6 +588,8 @@
 
         saveToken() {
           localStorage.setItem("sys1_admin_token", this.adminToken);
+          this.authError = false;
+          this.loadModels();
         },
 
         getHeaders() {
@@ -599,7 +602,9 @@
 
         async loadModels() {
           try {
-            const res = await fetch("/v1/models");
+            const res = await fetch("/v1/models", {
+              headers: this.getHeaders()
+            });
             if (res.ok) {
               const data = await res.json();
               if (data.warm && Array.isArray(data.warm)) {
@@ -616,6 +621,8 @@
                   }
                 });
               }
+            } else if (res.status === 401) {
+              this.showTokenModal = true;
             }
           } catch (e) {
             console.warn("Live /v1/models fetch note:", e.message);
@@ -747,7 +754,7 @@
           try {
             const res = await fetch("/v1/decide", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: this.getHeaders(),
               body: this.rawJsonRequest
             });
 
@@ -763,6 +770,9 @@
               if (!this.warmModels.includes(this.activeModelId)) {
                 this.warmModels.push(this.activeModelId);
               }
+            } else if (res.status === 401) {
+              alert("Unauthorized: API_TOKEN required. Click 🔑 Auth Token to configure.");
+              this.showTokenModal = true;
             } else {
               const err = await res.text();
               alert("Decision request failed (" + res.status + "): " + err);
@@ -792,7 +802,7 @@
             const t0 = performance.now();
             const res1 = await fetch("/v1/decide", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: this.getHeaders(),
               body: this.rawJsonRequest
             });
             const coldRoundtrip = Math.round(performance.now() - t0);
@@ -801,7 +811,7 @@
             const t1 = performance.now();
             const res2 = await fetch("/v1/decide", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: this.getHeaders(),
               body: this.rawJsonRequest
             });
             const warmRoundtrip = Math.round(performance.now() - t1);
@@ -915,19 +925,20 @@
         🗑️ Clear Cache
       </button>
 
-      <button class="btn btn-sm" @click="showTokenModal = !showTokenModal" :class="adminToken ? 'btn-amber' : ''" title="Set API_TOKEN for protected actions">
-        🔑 <span x-text="adminToken ? 'Token Set' : 'Auth Token'"></span>
+      <button class="btn btn-sm" @click="showTokenModal = !showTokenModal" :class="adminToken ? 'btn-amber' : ''" title="Set API_TOKEN for authenticated actions">
+        🔑 <span x-text="adminToken ? 'Token Configured' : 'Auth Token'"></span>
       </button>
     </div>
   </header>
 
   <!-- AUTH TOKEN DRAWER (IF TOGGLED) -->
   <div x-show="showTokenModal" style="background: var(--bg-card); border-bottom: 1px solid var(--border-subtle); padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-    <div style="font-size: 0.8rem; color: var(--nixie-amber); font-weight: 600;">
-      API_TOKEN Authorization:
+    <div style="font-size: 0.8rem; color: var(--nixie-amber); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
+      <span>🔑</span> API_TOKEN Authorization:
     </div>
-    <input type="text" x-model="adminToken" @input="saveToken()" placeholder="Enter secret API_TOKEN if configured on worker" style="max-width: 380px; padding: 0.35rem 0.6rem; font-size: 0.8rem;" />
-    <span style="font-size: 0.75rem; color: var(--text-dim);">Persisted to localStorage for admin REST requests (Unload / Cache Clear).</span>
+    <input x-ref="tokenInput" type="password" x-model="adminToken" @input="saveToken()" placeholder="Enter secret API_TOKEN if configured on worker" style="max-width: 380px; padding: 0.35rem 0.6rem; font-size: 0.8rem; border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--bg-dark); color: var(--text-main);" />
+    <button class="btn btn-sm" @click="adminToken = ''; saveToken()" x-show="adminToken" title="Clear token">Clear</button>
+    <span style="font-size: 0.75rem; color: var(--text-dim);" x-text="adminToken ? '✓ Token saved to localStorage and attached as Bearer header.' : 'Persisted to localStorage for REST requests (Decide / Unload / Cache Clear).'"></span>
   </div>
 
   <main>
@@ -1089,6 +1100,17 @@
           </button>
           <button class="btn btn-amber" @click="runBenchmark()" :disabled="loading" title="Run cold load vs warm LRU cache comparison">
             ⚡ Benchmark Cold vs Warm
+          </button>
+        </div>
+
+        <!-- AUTH REQUIRED WARNING BANNER (IF 401 ENCOUNTERED) -->
+        <div x-show="authError" style="background: rgba(255, 170, 0, 0.12); border: 1px solid var(--nixie-amber); border-radius: 6px; padding: 0.6rem 0.8rem; margin-top: 0.75rem; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+          <div style="color: var(--nixie-amber); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🔒</span>
+            <span><strong>Authentication Required:</strong> <code>/v1/decide</code> requires an <code>API_TOKEN</code> on this worker.</span>
+          </div>
+          <button class="btn btn-sm btn-amber" @click="showTokenModal = true; $nextTick(() => { if ($refs.tokenInput) $refs.tokenInput.focus(); })">
+            Enter Token 🔑
           </button>
         </div>
       </div>

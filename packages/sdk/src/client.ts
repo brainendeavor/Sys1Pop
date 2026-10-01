@@ -19,6 +19,7 @@ export interface Sys1PopOptions {
   endpoint?: string;
   binding?: ServiceBinding;
   headers?: Record<string, string>;
+  token?: string;
 }
 
 export type Sys1PopTarget = ServiceBinding | string | Sys1PopOptions | undefined | null;
@@ -110,7 +111,10 @@ export class Sys1Pop {
       const opts = target as Sys1PopOptions;
       this.binding = opts.binding;
       this.baseUrl = (opts.endpoint || "http://sys1pop").replace(/\/+$/, "");
-      this.defaultHeaders = opts.headers || {};
+      this.defaultHeaders = { ...(opts.headers || {}) };
+      if (opts.token) {
+        this.defaultHeaders["Authorization"] = `Bearer ${opts.token}`;
+      }
       this.configured = !!(opts.binding || opts.endpoint);
     }
   }
