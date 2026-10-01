@@ -30,7 +30,7 @@ npx sys1pop deploy
 ```
 
 ### 2. `sys1pop seed-catalog`
-Syncs the pre-quantized foundation models into your Cloudflare R2 bucket (`sys1-models`):
+Syncs the pre-quantized foundation models into your Cloudflare R2 bucket (`sys1pop-models`):
 * `sys1-base`: 33.4M parameter general semantic representation & decision backbone.
 * `rag-reranker`: 33.4M parameter passage cross-encoder for RAG triage.
 * `intent-router`: 33.4M parameter multi-action intent routing backbone.

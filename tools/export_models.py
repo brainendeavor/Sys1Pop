@@ -11,6 +11,7 @@ import argparse
 import datetime
 import json
 import os
+import shutil
 import sys
 
 import numpy as np
@@ -238,6 +239,7 @@ def calibrate_all_heads(tokenizer, base_model):
 
         # 2: escalation
         ("Our production API is failing with 500 errors across all European nodes, critical outage!", 2, 1, 4),
+        ("Our production database is experiencing connection exhaustion and 500 errors across all nodes, critical!", 2, 1, 4),
         ("Security breach detected: unauthorized API tokens accessing customer records.", 2, 1, 4),
         ("I need to speak to an engineering manager immediately, this is impacting enterprise clients.", 2, 1, 4),
         ("System outage: database connections exhausted, SLA breach imminent.", 2, 1, 4),
@@ -252,9 +254,9 @@ def calibrate_all_heads(tokenizer, base_model):
     ]
     texts, intents, actions, priorities = zip(*base_data)
     X_base = encode_texts(list(texts))
-    clf_base_intent = LogisticRegression(C=5.0, max_iter=200).fit(X_base, np.array(intents))
-    clf_base_action = LogisticRegression(C=5.0, max_iter=200).fit(X_base, np.array(actions))
-    clf_base_priority = LogisticRegression(C=5.0, max_iter=200).fit(X_base, np.array(priorities))
+    clf_base_intent = LogisticRegression(C=10.0, max_iter=300).fit(X_base, np.array(intents))
+    clf_base_action = LogisticRegression(C=10.0, max_iter=300).fit(X_base, np.array(actions))
+    clf_base_priority = LogisticRegression(C=10.0, max_iter=300).fit(X_base, np.array(priorities))
 
     heads["sys1-base"] = {
         "heads.choice.primary_intent.weight": torch.from_numpy(clf_base_intent.coef_).float(),
@@ -394,23 +396,46 @@ def calibrate_all_heads(tokenizer, base_model):
 
     return heads
 
-def export_all(base_output_dir):
+def export_all(base_output_dir, base_model_name="sentence-transformers-testing/stsb-bert-tiny-safetensors", target_models=None, prune=False):
     print("\n📦 Exporting Sys1Pop Production Neural Model Bundles...")
     print("=" * 70)
-    print("📥 Loading HuggingFace base model: sentence-transformers/all-MiniLM-L6-v2")
-    tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
-    base_model = AutoModel.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
+    print(f"📥 Loading HuggingFace base model: {base_model_name}")
+    tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+    base_model = AutoModel.from_pretrained(base_model_name)
     base_model.eval()
 
     base_state_dict = base_model.state_dict()
     config_dict = base_model.config.to_dict()
+    hidden_dim = config_dict.get("hidden_size", 128)
 
     heads = calibrate_all_heads(tokenizer, base_model)
 
     os.makedirs(base_output_dir, exist_ok=True)
     catalog_entries = []
 
-    for model_meta in MODELS_CONFIG:
+    if target_models:
+        if isinstance(target_models, str):
+            target_set = set(m.strip() for m in target_models.replace(",", " ").split() if m.strip())
+        else:
+            target_set = set(target_models)
+        models_to_export = [m for m in MODELS_CONFIG if m["model_id"] in target_set]
+        if not models_to_export:
+            print(f"⚠️ Warning: None of the requested models {target_set} matched known models. Exporting all.")
+            models_to_export = MODELS_CONFIG
+    else:
+        models_to_export = MODELS_CONFIG
+
+    kept_model_ids = {m["model_id"] for m in models_to_export}
+
+    # Prune unselected local model directories if --prune was requested
+    if prune and os.path.exists(base_output_dir):
+        for entry_name in os.listdir(base_output_dir):
+            full_p = os.path.join(base_output_dir, entry_name)
+            if os.path.isdir(full_p) and entry_name not in kept_model_ids:
+                print(f"  🗑️ Pruned unselected local model directory: {entry_name}")
+                shutil.rmtree(full_p, ignore_errors=True)
+
+    for model_meta in models_to_export:
         model_id = model_meta["model_id"]
         bundle_dir = os.path.join(base_output_dir, model_id)
         os.makedirs(bundle_dir, exist_ok=True)
@@ -441,10 +466,10 @@ def export_all(base_output_dir):
             "name": model_meta["name"],
             "icon": model_meta["icon"],
             "description": model_meta["description"],
-            "architecture": "minilm_l6_v2",
-            "hidden_dim": 384,
-            "max_seq_len": 512,
-            "quantization": "fp32",
+            "architecture": config_dict.get("model_type", "bert_tiny"),
+            "hidden_dim": hidden_dim,
+            "max_seq_len": config_dict.get("max_position_embeddings", 512),
+            "quantization": "fp32_edge",
             "supported_heads": ["choice", "boolean", "score"],
             "default_state": model_meta.get("default_state", ""),
             "default_chunks": model_meta.get("default_chunks", []),
@@ -463,21 +488,35 @@ def export_all(base_output_dir):
         catalog_entries.append(manifest)
         print(f"  ✓ Model '{model_id}' exported ({file_size_mb:.2f} MB)")
 
-    # 5. Master catalog.json
+    # 5. Master catalog.json (preserve existing entries if exporting subset unless prune is set)
     catalog_path = os.path.join(base_output_dir, "catalog.json")
+    catalog_dict = {}
+    if not prune and os.path.exists(catalog_path):
+        try:
+            with open(catalog_path, "r", encoding="utf-8") as f:
+                old_catalog = json.load(f)
+                for entry in old_catalog.get("models", []):
+                    if "model_id" in entry:
+                        catalog_dict[entry["model_id"]] = entry
+        except Exception:
+            pass
+
+    for entry in catalog_entries:
+        catalog_dict[entry["model_id"]] = entry
+
     catalog_data = {
         "schema_version": "1.0",
         "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "models": catalog_entries
+        "models": list(catalog_dict.values())
     }
     with open(catalog_path, "w", encoding="utf-8") as f:
         json.dump(catalog_data, f, indent=2)
 
     print(f"  ✓ Generated master catalog: {catalog_path}")
     print("=" * 70)
-    print(f"✅ All {len(MODELS_CONFIG)} production neural models successfully generated!\n")
+    print(f"✅ All {len(models_to_export)} requested neural models successfully generated!\n")
 
-def verify_all(base_output_dir):
+def verify_all(base_output_dir, target_models=None):
     print(f"\n🔍 Verifying Model Catalog in: {base_output_dir}")
     catalog_path = os.path.join(base_output_dir, "catalog.json")
     if not os.path.exists(catalog_path):
@@ -487,8 +526,17 @@ def verify_all(base_output_dir):
     with open(catalog_path, "r", encoding="utf-8") as f:
         catalog = json.load(f)
 
+    target_set = None
+    if target_models:
+        if isinstance(target_models, str):
+            target_set = set(m.strip() for m in target_models.replace(",", " ").split() if m.strip())
+        else:
+            target_set = set(target_models)
+
     for item in catalog.get("models", []):
         mid = item["model_id"]
+        if target_set and mid not in target_set:
+            continue
         bundle_dir = os.path.join(base_output_dir, mid)
         for req in ["manifest.json", "model.safetensors", "tokenizer.json", "config.json"]:
             p = os.path.join(bundle_dir, req)
@@ -497,19 +545,22 @@ def verify_all(base_output_dir):
                 sys.exit(1)
         size_mb = os.path.getsize(os.path.join(bundle_dir, "model.safetensors")) / (1024 * 1024)
         print(f"  ✓ Model verified: {mid} ({size_mb:.2f} MB)")
-    print("✅ All catalog models verified!\n")
+    print("✅ Catalog models verified!\n")
 
 def main():
     parser = argparse.ArgumentParser(description="Export Sys1Pop production neural models and catalog")
     parser.add_argument("--output-dir", default="./dist/models", help="Output directory for model bundles")
-    parser.add_argument("--verify-all", action="store_true", help="Verify all exported bundles")
+    parser.add_argument("--base-model", default="sentence-transformers-testing/stsb-bert-tiny-safetensors", help="Base HuggingFace model")
+    parser.add_argument("--models", default=None, help="Comma- or space-separated list of model IDs to export")
+    parser.add_argument("--prune", action="store_true", help="Remove models not specified from catalog and dist directory")
+    parser.add_argument("--verify-all", action="store_true", help="Verify exported bundles")
 
     args = parser.parse_args()
     if args.verify_all:
-        verify_all(args.output_dir)
+        verify_all(args.output_dir, args.models)
     else:
-        export_all(args.output_dir)
-        verify_all(args.output_dir)
+        export_all(args.output_dir, args.base_model, args.models, prune=args.prune)
+        verify_all(args.output_dir, args.models)
 
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 # Cloudflare R2 bucket binding for streaming model weights
 [[r2_buckets]]
 binding = "MODELS"
-bucket_name = "sys1-models"
+bucket_name = "sys1pop-models"
 
 # Cloudflare Worker Paid resource configuration (allows up to 512MB RAM)
 [limits]

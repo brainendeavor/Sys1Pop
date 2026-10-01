@@ -47,10 +47,12 @@ impl Sys1Engine {
         let config: candle_transformers::models::bert::Config = serde_json::from_slice(config_bytes)
             .map_err(|e| Error::Serialization(e))?;
         
-        let backbone = QuantizedBackbone::from_safetensors(safetensors_bytes.clone(), &config, device.clone())?;
+        let mut head_tensors = candle_core::safetensors::load_buffer(&safetensors_bytes, &device)?;
+        head_tensors.retain(|k, _| k.starts_with("heads."));
+
+        let backbone = QuantizedBackbone::from_safetensors(safetensors_bytes, &config, device.clone())?;
         let tokenizer = tokenizers::Tokenizer::from_bytes(tokenizer_bytes)
             .map_err(|e| Error::Engine(format!("Tokenizer load error: {e}")))?;
-        let head_tensors = candle_core::safetensors::load_buffer(&safetensors_bytes, &device)?;
 
         Ok(Self {
             model_id: model_id.into(),
