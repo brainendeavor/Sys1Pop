@@ -2,9 +2,10 @@
 
 **Project Name:** `Sys1Pop ModelForge`  
 **Reference ID:** `RFC-002-MODEL-FORGE`  
-**Status:** Proposed / Draft  
+**Status:** Implemented / Accepted  
+**Usage Documentation:** [`docs/MODEL_FORGE.md`](./MODEL_FORGE.md)  
 **Target Package:** `@sys1pop/cli`, `tools/model_forge.py`, `@sys1pop/sdk`  
-**Companion Documents:** [`docs/SPEC.md`](./SPEC.md), [`tools/export_models.py`](../tools/export_models.py)  
+**Companion Documents:** [`docs/MODEL_FORGE.md`](./MODEL_FORGE.md), [`docs/SPEC.md`](./SPEC.md), [`tools/export_models.py`](../tools/export_models.py)  
 
 ---
 

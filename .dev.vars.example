@@ -1,0 +1,36 @@
+# Sys1Pop Local Development Environment Variables
+# Copy this file to .dev.vars for local development:
+#   cp .dev.vars.example .dev.vars
+# DO NOT commit .dev.vars to version control!
+
+# ==============================================================================
+# 1. Kick the Tires Interactive Studio
+# ==============================================================================
+# Enables the embedded web testing playground at http://localhost:6061/ and /ui
+# Set to "false" to run as a headless API microservice
+ENABLE_UI=true
+
+# ==============================================================================
+# 2. Authentication & Security
+# ==============================================================================
+# Secret API token required for admin lifecycle routes (/v1/models/unload, /v1/cache/clear)
+# and for /v1/decide when SECURE_DECIDE_API is enabled.
+# Passed via "Authorization: Bearer <token>" or "X-API-Token: <token>"
+API_TOKEN=dev-secret-token-123
+
+# Enforce API_TOKEN authentication on the /v1/decide inference endpoint.
+# Set to "false" for unauthenticated local development and playground testing.
+# Set to "true" when testing secure API caller integration.
+SECURE_DECIDE_API=false
+
+# Enable or disable admin lifecycle endpoints (/v1/models/unload, /v1/cache/clear).
+# Defaults to true (which requires a valid API_TOKEN).
+# Set to "false" to disable these endpoints entirely (returns 403 Forbidden).
+ENABLE_ADMIN_API=true
+
+# ==============================================================================
+# 3. Model Catalog & Registry
+# ==============================================================================
+# Comma-separated list of model IDs to include in the GET /v1/models catalog
+# fallback if models/catalog.json is not present in the R2 bucket.
+CONFIGURED_MODELS=sys1-base,spam-detector-v1,rag-triage-v1,intent-router-v1

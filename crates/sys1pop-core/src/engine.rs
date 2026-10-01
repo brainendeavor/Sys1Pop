@@ -415,4 +415,72 @@ mod tests {
             assert!(value, "Outage requires action");
         } else { panic!("Expected boolean result"); }
     }
+
+    #[test]
+    fn test_modelforge_support_triage_classification() {
+        let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let model_dir = manifest_dir.join("../../dist/models/support-triage-v1");
+        if !model_dir.exists() {
+            return;
+        }
+
+        let engine = Sys1Engine::load_from_dir("support-triage-v1", &model_dir)
+            .expect("Failed to load ModelForge bundle from dist/models/support-triage-v1");
+
+        let triage_questions = vec![
+            Question::Choice {
+                id: "department".to_string(),
+                options: vec![
+                    "billing".to_string(),
+                    "technical_support".to_string(),
+                    "sales".to_string(),
+                    "general".to_string(),
+                ],
+            },
+            Question::Boolean { id: "requires_escalation".to_string() },
+            Question::Score { id: "urgency_rating".to_string(), min: Some(1), max: Some(5) },
+        ];
+
+        // 1. Billing Inquiry
+        let billing_req = DecisionRequest {
+            model: Some("support-triage-v1".to_string()),
+            state: "Site: store.com | Name: Alice | Subject: Double charged on invoice #4821 and card charged twice.".to_string(),
+            context_chunks: vec![],
+            triage_config: None,
+            questions: triage_questions.clone(),
+        };
+
+        let billing_res = engine.execute(billing_req).unwrap();
+        if let DecisionResult::Choice { winner, confidence, .. } = &billing_res.decisions["department"] {
+            assert_eq!(winner, "billing");
+            assert!(*confidence > 0.40);
+        } else { panic!("Expected choice result"); }
+
+        if let DecisionResult::Boolean { value, .. } = &billing_res.decisions["requires_escalation"] {
+            assert!(!value, "Routine billing should not require escalation");
+        } else { panic!("Expected boolean result"); }
+
+        // 2. Production Outage Incident
+        let outage_req = DecisionRequest {
+            model: Some("support-triage-v1".to_string()),
+            state: "Site: app.io | Name: Bob | Subject: Production database down with 500 errors across all clusters!".to_string(),
+            context_chunks: vec![],
+            triage_config: None,
+            questions: triage_questions.clone(),
+        };
+
+        let outage_res = engine.execute(outage_req).unwrap();
+        if let DecisionResult::Choice { winner, .. } = &outage_res.decisions["department"] {
+            assert_eq!(winner, "technical_support");
+        } else { panic!("Expected choice result"); }
+
+        if let DecisionResult::Boolean { value, probability } = &outage_res.decisions["requires_escalation"] {
+            assert!(value, "Outage must require escalation");
+            assert!(*probability > 0.60);
+        } else { panic!("Expected boolean result"); }
+
+        if let DecisionResult::Score { expected_value, .. } = &outage_res.decisions["urgency_rating"] {
+            assert!(*expected_value >= 3.5, "Urgency should be >= 3.5 for prod outage, got {}", expected_value);
+        } else { panic!("Expected score result"); }
+    }
 }

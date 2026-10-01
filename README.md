@@ -11,7 +11,7 @@ An ultra-lean, autonomous "System 1" decision engine and RAG triage pipeline dep
 ## Key Highlights
 
 - **Pure In-Worker Inference:** No external API roundtrips; executes directly within the Cloudflare V8 isolate at every edge PoP using real Candle transformer embeddings.
-- **The "Cost Hack":** Consumes ~20–40ms of Worker CPU time (**~$1.00 per 1M decisions**), compared to $12.00 on Workers AI, $35–$70 on GPT-4o-mini, or recurring fees on third-party SaaS APIs.
+- **The "Cost Hack":** Consumes \~20–40ms of Worker CPU time (**\~$1.00 per 1M decisions**), compared to $12.00 on Workers AI, $35–$70 on GPT-4o-mini, or recurring fees on third-party SaaS APIs.
 - **400MB+ Memory Headroom:** Sized around a 33.4M–70M parameter backbone (MiniLM cross-encoders) so the remaining isolate RAM can power multi-chunk RAG triage and text pre-processing pipelines.
 - **Dynamic R2 Streaming:** Model weights and tokenizers stream on-demand from Cloudflare R2 into isolate RAM with LRU caching.
 - **WASM SIMD128 Accelerated:** Vector operations compiled with `-C target-feature=+simd128` for 3x–4x throughput on V8.
@@ -22,6 +22,8 @@ An ultra-lean, autonomous "System 1" decision engine and RAG triage pipeline dep
 
 ## Detailed Documentation
 
+- 📋 **[Setup & Configuration Guide](docs/SETUP.md):** Complete guide to local setup with Kick the Tires UI, environment variables, R2 bucket provisioning, and production deployment.
+- 🔨 **[ModelForge Edge Compiler](docs/MODEL_FORGE.md):** Complete guide to declarative `model.spec.json` model creation, instant CPU head fitting (<2s), packaging, and single-command R2 publishing.
 - 📊 **[Economics & Benchmarks](docs/economics_and_benchmarks.md):** Side-by-side cost breakdown comparing Worker CPU time, Workers AI Neurons, and cloud LLMs across 100K, 1M, and 10M requests.
 - 📖 **[Frontier LLM Distillation Spec](docs/SPEC.md):** Specification for Claude, Gemini, and GPT to distill custom edge models.
 - 🎨 **[Brand Guidelines & Design Kit](docs/brand_kit/BRAND_GUIDELINES.md):** Official banners, shield emblems, Nixie logotype, and color tokens.
@@ -101,6 +103,13 @@ Sys1Pop
   cargo install worker-build
   ```
 
+### Configure Local Environment Variables
+Copy `.dev.vars.example` to create your local `.dev.vars` file (git-ignored):
+```bash
+cp .dev.vars.example .dev.vars
+```
+Adjust configuration flags such as `ENABLE_UI=true`, `API_TOKEN`, or `SECURE_DECIDE_API` as needed.
+
 ### Run Workspace Tests
 ```bash
 cargo test --workspace
@@ -130,16 +139,20 @@ curl -X POST http://localhost:6061/v1/decide \
 
 ---
 
-## Security & Authentication
+## Environment Variables & Security Configuration
 
-Sys1Pop provides flexible token-based authentication and lifecycle access controls via Cloudflare Worker environment variables or secrets:
+Sys1Pop provides flexible token-based authentication, model registry fallbacks, and lifecycle access controls via Cloudflare Worker environment variables, secrets, and bindings:
 
-| Environment Variable | Type | Default | Description |
+| Variable / Binding | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | **`API_TOKEN`** | Secret / Var | `""` | Secret token required for authenticated requests. Accepted via `Authorization: Bearer <token>` or `X-API-Token: <token>`. |
-| **`SECURE_DECIDE_API`** | Var | `false` | When set to `true`, **expands `API_TOKEN` authentication to secure the `/v1/decide` inference route** for production deployment. |
+| **`SECURE_DECIDE_API`** | Var | `false` | When set to `true`, **expands `API_TOKEN` authentication to secure the `/v1/decide` inference route** for production deployment. *(Aliases: `SECURE_ALL_APIS`, `REQUIRE_AUTH`)* |
 | **`ENABLE_ADMIN_API`** | Var | `true` | When set to `false`, completely disables admin lifecycle APIs (`/v1/models/unload`, `/v1/cache/clear`) with HTTP 403 Forbidden. |
 | **`ENABLE_UI`** | Var | `false` | Enables embedded Kick the Tires interactive testing studio at `/` and `/ui`. Secured by disabling it in production. |
+| **`CONFIGURED_MODELS`** | Var | `sys1-base, ...` | Comma-separated list of model IDs to include in `GET /v1/models` catalog when no dynamic `models/catalog.json` exists in R2. |
+| **`MODELS`** | R2 Bucket Binding | `sys1pop-models` | Cloudflare R2 bucket binding configured in `wrangler.toml` for streaming model safetensors, configurations, and tokenizers. |
+
+👉 For step-by-step setup guides, Cloudflare R2 provisioning, and production deployment, see **[docs/SETUP.md](docs/SETUP.md)**.
 
 ### Authenticating Requests
 When `SECURE_DECIDE_API=true`, decision requests must include the token:

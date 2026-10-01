@@ -1,0 +1,195 @@
+{
+  "$schema": "https://sys1pop.dev/schema/model.spec.v1.json",
+  "model_id": "spam-detector-v1",
+  "name": "Web Form Spam & Phishing",
+  "version": "1.0.0",
+  "icon": "shield",
+  "description": "Evaluates user messages, sender emails, and site context to classify spam, intent, and risk.",
+  "base_backbone": "sentence-transformers-testing/stsb-bert-tiny-safetensors",
+  "quantization": "fp32_edge",
+  "calibration": {
+    "temperature": 1.0,
+    "regularization_c": 5.0,
+    "max_iterations": 200,
+    "default_threshold": 0.5
+  },
+  "default_state": "Site: example.com | Name: Alex Taylor | Email: alex.marketing@example.com | Message: Hello team, I noticed your website has great content but low Google ranking. We offer high-quality backlinks and guest posts with DA 80+ to get you to #1 on search engines. Contact my handle: @example_marketer",
+  "questions": [
+    {
+      "id": "is_spam",
+      "type": "boolean",
+      "threshold": 0.5
+    },
+    {
+      "id": "spam_category",
+      "type": "choice",
+      "options": [
+        "legitimate_inquiry",
+        "commercial_sales_pitch",
+        "seo_backlink_spam",
+        "crypto_phishing",
+        "automated_bot_gibberish"
+      ]
+    },
+    {
+      "id": "risk_score",
+      "type": "score",
+      "min": 1,
+      "max": 5
+    }
+  ],
+  "sample_presets": [
+    {
+      "label": "🚨 Crypto Phishing",
+      "state": "Site: example.com | Name: Reward Bot | Email: airdrop@example.org | Message: Urgent: Send 0.1 ETH to verify wallet and receive 5,000 promo tokens immediately to your balance."
+    },
+    {
+      "label": "📈 SEO Sales Pitch",
+      "state": "Site: example.com | Name: Alex Taylor | Email: alex.marketing@example.com | Message: Hello team, I noticed your website has great content but low Google ranking. We offer high-quality backlinks and guest posts with DA 80+ to get you to #1 on search engines. Contact my handle: @example_marketer"
+    },
+    {
+      "label": "✅ Clean Inquiry",
+      "state": "Site: example.com | Name: Dr. Jane Doe | Email: jane.doe@example.com | Message: Hello, I would like to schedule a technical briefing on deploying Sys1Pop across our global edge points of presence."
+    }
+  ],
+  "training_examples": [
+    {
+      "state": "Hello, I would like to schedule a technical briefing on deploying your platform across our edge points of presence.",
+      "is_spam": false,
+      "spam_category": "legitimate_inquiry",
+      "risk_score": 1
+    },
+    {
+      "state": "Hi team, what is your pricing for enterprise customers and do you offer SLA guarantees?",
+      "is_spam": false,
+      "spam_category": "legitimate_inquiry",
+      "risk_score": 1
+    },
+    {
+      "state": "Good morning, we are evaluating your API for integration with our CRM. Where can I find documentation?",
+      "is_spam": false,
+      "spam_category": "legitimate_inquiry",
+      "risk_score": 1
+    },
+    {
+      "state": "Hello, I am interested in scheduling a demo of your system for our engineering team.",
+      "is_spam": false,
+      "spam_category": "legitimate_inquiry",
+      "risk_score": 1
+    },
+    {
+      "state": "Hi, does your service support multi-region failover and EU data residency compliance?",
+      "is_spam": false,
+      "spam_category": "legitimate_inquiry",
+      "risk_score": 1
+    },
+    {
+      "state": "Dr. Jane Doe reaching out regarding technical briefing on deploying Sys1Pop across our global edge points of presence.",
+      "is_spam": false,
+      "spam_category": "legitimate_inquiry",
+      "risk_score": 1
+    },
+    {
+      "state": "Just a quick question regarding team plan billing details.",
+      "is_spam": false,
+      "spam_category": "legitimate_inquiry",
+      "risk_score": 2
+    },
+    {
+      "state": "Hi, I work in the local metro area, and help many local companies. I was hoping I could come by and offer a complimentary cleaning bid? Respond with stop to optout.",
+      "is_spam": true,
+      "spam_category": "commercial_sales_pitch",
+      "risk_score": 3
+    },
+    {
+      "state": "Hey there, our agency specializes in B2B lead generation. Can we set up a quick 10-minute call this Thursday to share how we scaled similar companies?",
+      "is_spam": true,
+      "spam_category": "commercial_sales_pitch",
+      "risk_score": 3
+    },
+    {
+      "state": "Hello, I am reaching out to introduce our cloud cost optimization services. We guarantee 30% savings on AWS. Unsubscribe here.",
+      "is_spam": true,
+      "spam_category": "commercial_sales_pitch",
+      "risk_score": 3
+    },
+    {
+      "state": "Hi, wanted to follow up on my previous note. We provide outsourced SDR and sales staffing solutions. Reply with STOP to unsubscribe.",
+      "is_spam": true,
+      "spam_category": "commercial_sales_pitch",
+      "risk_score": 3
+    },
+    {
+      "state": "Business Development Rep reaching out to offer facilities management bid. Respond with stop to optout.",
+      "is_spam": true,
+      "spam_category": "commercial_sales_pitch",
+      "risk_score": 3
+    },
+    {
+      "state": "Hello team, I noticed your website has great content but low Google ranking. We offer high-quality backlinks and guest posts with DA 80+ to get you to #1 on search engines.",
+      "is_spam": true,
+      "spam_category": "seo_backlink_spam",
+      "risk_score": 3
+    },
+    {
+      "state": "Hi, I would love to contribute a high quality guest post to your blog with contextual do-follow links. Let me know your editorial rates.",
+      "is_spam": true,
+      "spam_category": "seo_backlink_spam",
+      "risk_score": 3
+    },
+    {
+      "state": "We offer link building packages and contextual backlinks to boost your domain authority and organic traffic.",
+      "is_spam": true,
+      "spam_category": "seo_backlink_spam",
+      "risk_score": 3
+    },
+    {
+      "state": "Alex Taylor marketing specialist offering high quality backlinks and guest posts with DA 80+ to get you to #1 on search engines.",
+      "is_spam": true,
+      "spam_category": "seo_backlink_spam",
+      "risk_score": 3
+    },
+    {
+      "state": "Urgent: Send 0.1 ETH to verify wallet and receive 5,000 promo tokens immediately to your balance.",
+      "is_spam": true,
+      "spam_category": "crypto_phishing",
+      "risk_score": 5
+    },
+    {
+      "state": "Claim your free 500 USDT airdrop now by connecting your MetaMask web3 wallet before gas fees increase!",
+      "is_spam": true,
+      "spam_category": "crypto_phishing",
+      "risk_score": 5
+    },
+    {
+      "state": "Security alert: Your crypto wallet connection has expired. Connect seed phrase at verify-token.xyz to restore access.",
+      "is_spam": true,
+      "spam_category": "crypto_phishing",
+      "risk_score": 5
+    },
+    {
+      "state": "Reward Bot: Urgent send 0.1 ETH to verify wallet and receive 5,000 promo tokens immediately to your balance.",
+      "is_spam": true,
+      "spam_category": "crypto_phishing",
+      "risk_score": 5
+    },
+    {
+      "state": "asdf jkl; qwerty 12345 zxcvbnm test string random bot input",
+      "is_spam": true,
+      "spam_category": "automated_bot_gibberish",
+      "risk_score": 4
+    },
+    {
+      "state": "http://spam-link.ru/click?id=999888777 dsa890fdsa890fdsa",
+      "is_spam": true,
+      "spam_category": "automated_bot_gibberish",
+      "risk_score": 4
+    },
+    {
+      "state": "Buy cheap replica watches online free shipping 888777666 discount",
+      "is_spam": true,
+      "spam_category": "automated_bot_gibberish",
+      "risk_score": 4
+    }
+  ]
+}

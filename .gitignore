@@ -17,5 +17,6 @@ __pycache__/
 # Local environment & secret variables
 .env*
 .dev.vars*
+!.dev.vars.example
 wrangler.overrides.toml
 wrangler.local.toml

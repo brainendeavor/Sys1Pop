@@ -1,0 +1,132 @@
+{
+  "$schema": "https://sys1pop.dev/schema/model.spec.v1.json",
+  "model_id": "support-triage-v1",
+  "name": "Customer Support & Incident Router",
+  "version": "1.0.0",
+  "icon": "life-buoy",
+  "description": "Triages customer inquiries, detects urgent SLA incidents, and routes to appropriate teams.",
+  "base_backbone": "sentence-transformers-testing/stsb-bert-tiny-safetensors",
+  "quantization": "fp32_edge",
+  "calibration": {
+    "temperature": 1.0,
+    "regularization_c": 5.0,
+    "max_iterations": 200,
+    "default_threshold": 0.5
+  },
+  "questions": [
+    {
+      "id": "department",
+      "type": "choice",
+      "options": ["billing", "technical_support", "sales", "general"]
+    },
+    {
+      "id": "requires_escalation",
+      "type": "boolean",
+      "threshold": 0.5
+    },
+    {
+      "id": "urgency_rating",
+      "type": "score",
+      "min": 1,
+      "max": 5
+    }
+  ],
+  "sample_presets": [
+    {
+      "label": "💳 Billing Dispute",
+      "state": "Site: store.com | Name: Alice | Subject: Double charged on invoice #4821 and card charged twice."
+    },
+    {
+      "label": "🚨 Prod Outage",
+      "state": "Site: app.io | Name: Bob | Subject: Production database down with 500 errors across all clusters!"
+    },
+    {
+      "label": "💼 Enterprise Sales",
+      "state": "Site: agency.com | Name: Carol | Subject: Interested in enterprise pricing, dedicated SLAs, and custom contracts."
+    },
+    {
+      "label": "💬 General Praise",
+      "state": "Site: blog.dev | Name: Dan | Subject: Really liked your latest tutorial on edge caching and Cloudflare Workers."
+    }
+  ],
+  "training_examples": [
+    {
+      "state": "Site: store.com | Name: Alice | Subject: Double charged on invoice #4821 and card charged twice.",
+      "department": "billing",
+      "requires_escalation": false,
+      "urgency_rating": 3
+    },
+    {
+      "state": "Site: billing.com | Name: Adam | Subject: Requesting refund for annual plan cancelled within 14 day window.",
+      "department": "billing",
+      "requires_escalation": false,
+      "urgency_rating": 2
+    },
+    {
+      "state": "Site: payment.io | Name: Arthur | Subject: Credit card expiration warning and update payment method failed.",
+      "department": "billing",
+      "requires_escalation": false,
+      "urgency_rating": 2
+    },
+    {
+      "state": "Site: app.io | Name: Bob | Subject: Production database down with 500 errors across all clusters!",
+      "department": "technical_support",
+      "requires_escalation": true,
+      "urgency_rating": 5
+    },
+    {
+      "state": "Site: api.dev | Name: Brian | Subject: API latency spike to 4500ms causing gateway timeouts for European users.",
+      "department": "technical_support",
+      "requires_escalation": true,
+      "urgency_rating": 5
+    },
+    {
+      "state": "Site: infra.net | Name: Bruce | Subject: How do I configure SSL certificate rotation in the staging cluster?",
+      "department": "technical_support",
+      "requires_escalation": false,
+      "urgency_rating": 2
+    },
+    {
+      "state": "Site: agency.com | Name: Carol | Subject: Interested in enterprise pricing, dedicated SLAs, and custom contracts.",
+      "department": "sales",
+      "requires_escalation": false,
+      "urgency_rating": 2
+    },
+    {
+      "state": "Site: corp.org | Name: Clara | Subject: Requesting a quote for 500 seats with custom SSO integration.",
+      "department": "sales",
+      "requires_escalation": false,
+      "urgency_rating": 2
+    },
+    {
+      "state": "Site: startup.co | Name: Chris | Subject: Can we schedule a demo of your edge AI triage features for our executive team?",
+      "department": "sales",
+      "requires_escalation": false,
+      "urgency_rating": 2
+    },
+    {
+      "state": "Site: blog.dev | Name: Dan | Subject: Really liked your latest tutorial on edge caching and Cloudflare Workers.",
+      "department": "general",
+      "requires_escalation": false,
+      "urgency_rating": 1
+    },
+    {
+      "state": "Site: news.com | Name: Diana | Subject: Press inquiry regarding your recent funding and open source announcements.",
+      "department": "general",
+      "requires_escalation": false,
+      "urgency_rating": 1
+    },
+    {
+      "state": "Site: dev.io | Name: Dave | Subject: Just wanted to send positive feedback on the documentation layout.",
+      "department": "general",
+      "requires_escalation": false,
+      "urgency_rating": 1
+    },
+    {
+      "state": "Site: security.io | Name: Eve | Subject: Critical security vulnerability report: unauthorized token leakage on /v1/auth.",
+      "department": "technical_support",
+      "requires_escalation": true,
+      "urgency_rating": 5
+    }
+  ]
+}
