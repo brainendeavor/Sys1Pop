@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sys1pop.dev/schema/model.spec.v1.json",
+  "title": "Sys1PopModelSpec",
+  "description": "Declarative Edge Neural Decision Model Specification (RFC-002)",
+  "type": "object",
+  "required": [
+    "model_id",
+    "name",
+    "questions"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "model_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique alphanumeric kebab-case identifier for the edge model (e.g. 'spam-detector-v1')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display title"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the model contract (e.g. '1.0.0')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the model purpose and domain"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Optional Lucide / Feather icon slug (e.g. 'shield', 'cpu', 'zap')"
+    },
+    "base_backbone": {
+      "type": "string",
+      "default": "sentence-transformers/all-MiniLM-L6-v2",
+      "description": "HuggingFace transformer model ID or local path to frozen backbone"
+    },
+    "quantization": {
+      "type": "string",
+      "enum": ["fp32_edge", "int8_q8_0"],
+      "default": "fp32_edge",
+      "description": "Edge quantization scheme"
+    },
+    "calibration": {
+      "type": "object",
+      "properties": {
+        "temperature": {
+          "type": "number",
+          "default": 1.0,
+          "minimum": 0.01,
+          "description": "Softmax temperature scaling factor for ChoiceHead"
+        },
+        "regularization_c": {
+          "type": "number",
+          "default": 5.0,
+          "minimum": 0.001,
+          "description": "Inverse of regularization strength for logistic regression probe heads"
+        },
+        "max_iterations": {
+          "type": "integer",
+          "default": 200,
+          "minimum": 10,
+          "description": "Maximum solver iterations for linear head calibrator"
+        },
+        "default_threshold": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Default threshold for BooleanHead"
+        }
+      },
+      "additionalProperties": false
+    },
+    "default_state": {
+      "type": "string",
+      "description": "Default state or query for testing and playground verification"
+    },
+    "default_chunks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Default RAG passage chunks for triage evaluation"
+    },
+    "triage_config": {
+      "type": ["object", "null"],
+      "properties": {
+        "relevance_threshold": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "sufficiency_threshold": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "strategy": { "type": "string" },
+        "max_retained_chunks": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "sample_presets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "state"],
+        "properties": {
+          "label": { "type": "string" },
+          "state": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["id", "type", "options"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "type": {
+                "const": "choice"
+              },
+              "options": {
+                "type": "array",
+                "minItems": 2,
+                "uniqueItems": true,
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "type": {
+                "const": "boolean"
+              },
+              "threshold": {
+                "type": "number",
+                "default": 0.5,
+                "minimum": 0.0,
+                "maximum": 1.0
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "type": {
+                "const": "score"
+              },
+              "min": {
+                "type": "integer",
+                "default": 1
+              },
+              "max": {
+                "type": "integer",
+                "default": 5
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "training_examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["state"],
+        "properties": {
+          "state": { "type": "string" }
+        },
+        "additionalProperties": true
+      },
+      "description": "Inline few-shot calibration examples with state string and question label values"
+    },
+    "dataset_path": {
+      "type": "string",
+      "description": "Optional relative or absolute path to external .csv or .jsonl dataset"
+    }
+  },
+  "additionalProperties": false
+}

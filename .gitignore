@@ -10,6 +10,10 @@ packages/cli/dist/
 node_modules/
 brand_concepts/
 
+# Python cache
+__pycache__/
+*.pyc
+
 # Local environment & secret variables
 .env*
 .dev.vars*
