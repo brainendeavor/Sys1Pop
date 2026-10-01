@@ -138,3 +138,47 @@ test("Sys1Pop SDK attaches Authorization Bearer header when token option is prov
   assert.equal(capturedHeaders["Authorization"], "Bearer secret_sys1_token_xyz");
 });
 
+test("Sys1Pop SDK decideWithSpec helper sets up request from ModelSpec", async () => {
+  let capturedBody = null;
+
+  const mockServiceBinding = {
+    async fetch(url, init) {
+      capturedBody = JSON.parse(init.body);
+      return new Response(
+        JSON.stringify({
+          decisions: {
+            department: {
+              type: "choice",
+              winner: "billing",
+              confidence: 0.92,
+              distribution: { billing: 0.92, sales: 0.08 },
+            },
+          },
+          metrics: { tokenize_ms: 1.0, forward_pass_ms: 5.0, total_ms: 6.0 },
+          cached: false,
+          model_id: "support-triage-v1",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    },
+  };
+
+  const sys1 = new Sys1Pop(mockServiceBinding);
+  const spec = {
+    model_id: "support-triage-v1",
+    name: "Customer Support & Incident Router",
+    questions: [
+      { id: "department", type: "choice", options: ["billing", "sales"] },
+      { id: "requires_escalation", type: "boolean" },
+      { id: "urgency_rating", type: "score", min: 1, max: 5 },
+    ],
+  };
+
+  const res = await sys1.decideWithSpec(spec, "I have an invoice inquiry");
+  assert.equal(capturedBody.model, "support-triage-v1");
+  assert.equal(capturedBody.state, "I have an invoice inquiry");
+  assert.equal(capturedBody.questions.length, 3);
+  assert.equal(res.getChoice("department"), "billing");
+  assert.equal(res.getConfidence("department"), 0.92);
+});
+

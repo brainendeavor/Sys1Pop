@@ -125,6 +125,30 @@ class Sys1Pop {
         return new DecisionResultHelper(raw);
     }
     /**
+     * Evaluates a decision request pre-configured from a declarative ModelSpec
+     */
+    async decideWithSpec(spec, state, overrides) {
+        const questions = spec.questions.map((q) => {
+            if (q.type === "choice") {
+                return { type: "choice", id: q.id, options: q.options };
+            }
+            else if (q.type === "score") {
+                return { type: "score", id: q.id, min: q.min, max: q.max };
+            }
+            else {
+                return { type: "boolean", id: q.id };
+            }
+        });
+        return this.decide({
+            model: spec.model_id,
+            state,
+            questions,
+            context_chunks: overrides?.context_chunks || spec.default_chunks || [],
+            triage_config: overrides?.triage_config || spec.triage_config || undefined,
+            ...overrides,
+        });
+    }
+    /**
      * Helper for multi-chunk RAG relevance and sufficiency triage
      */
     async triageRAG(query, chunks, config) {

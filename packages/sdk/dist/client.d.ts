@@ -1,4 +1,4 @@
-import { DecisionRequest, DecisionResponse, DecisionResult, ExecutionMetrics, HealthResponse, RAGTriageResult, TriageConfig } from "./types.js";
+import { DecisionRequest, DecisionResponse, DecisionResult, ExecutionMetrics, HealthResponse, ModelSpec, RAGTriageResult, TriageConfig } from "./types.js";
 /**
  * Minimal Cloudflare Worker Fetcher interface for Service Bindings
  */
@@ -47,6 +47,10 @@ export declare class Sys1Pop {
      * Universal decision method evaluating questions and RAG triage against a given state
      */
     decide(request: DecisionRequest): Promise<DecisionResultHelper>;
+    /**
+     * Evaluates a decision request pre-configured from a declarative ModelSpec
+     */
+    decideWithSpec(spec: ModelSpec, state: string, overrides?: Partial<DecisionRequest>): Promise<DecisionResultHelper>;
     /**
      * Helper for multi-chunk RAG relevance and sufficiency triage
      */

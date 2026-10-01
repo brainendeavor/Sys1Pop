@@ -93,3 +93,43 @@ export interface HealthResponse {
     cache_entries: number;
     warm_models: string[];
 }
+/**
+ * ModelForge Declarative Specification Types (RFC-002)
+ */
+export interface ModelSpecCalibration {
+    temperature?: number;
+    regularization_c?: number;
+    max_iterations?: number;
+    default_threshold?: number;
+}
+export type ModelSpecChoiceQuestion = ChoiceQuestion;
+export type ModelSpecBooleanQuestion = BooleanQuestion & {
+    threshold?: number;
+};
+export type ModelSpecScoreQuestion = ScoreQuestion;
+export type ModelSpecQuestion = ModelSpecChoiceQuestion | ModelSpecBooleanQuestion | ModelSpecScoreQuestion;
+export interface ModelSpecExample {
+    state: string;
+    [questionId: string]: string | number | boolean;
+}
+export interface ModelSpec {
+    $schema?: string;
+    model_id: string;
+    name: string;
+    version?: string;
+    description?: string;
+    icon?: string;
+    base_backbone?: string;
+    quantization?: "fp32_edge" | "int8_q8_0";
+    calibration?: ModelSpecCalibration;
+    default_state?: string;
+    default_chunks?: string[];
+    triage_config?: TriageConfig;
+    sample_presets?: Array<{
+        label: string;
+        state: string;
+    }>;
+    questions: ModelSpecQuestion[];
+    training_examples?: ModelSpecExample[];
+    dataset_path?: string;
+}
