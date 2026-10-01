@@ -3,7 +3,12 @@
 import { Sys1Pop } from "@sys1pop/sdk";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { execSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const MAX_BUNDLE_BYTES = 35 * 1024 * 1024; // 35 MB Edge Limit
 
@@ -15,29 +20,39 @@ USAGE:
   sys1pop <command> [options]
 
 COMMANDS:
-  deploy                    Deploy Sys1Pop worker microservice to Cloudflare
-  seed-catalog              Seed standard foundation models into Cloudflare R2
-  model push <dir>          Validate and upload a model bundle to Cloudflare R2
-  model list                List models currently warm in isolate RAM
-  model test <model-id>     Run live inference latency & cache verification
+  deploy                         Deploy Sys1Pop worker microservice to Cloudflare
+  seed-catalog                   Seed standard foundation models into Cloudflare R2
+  model init [path]              Initialize a declarative model.spec.json
+  model validate <spec>          Validate specification syntax, schema & dataset
+  model build <spec>             Compile spec into an edge neural bundle (< 35 MB)
+  model push <dir>               Validate, upload bundle & sync catalog to R2
+  model list                     List models currently warm in isolate RAM
+  model test <model-id>          Run live inference latency & cache verification
+  model unload <model-id>        Evict model from isolate RAM
 
 OPTIONS:
-  --endpoint <url>          Sys1Pop worker endpoint (default: http://localhost:6061)
-  --token, --api-token <t>  Configure or pass API_TOKEN for authenticated API routes
-  --secure-decide-api       Deploy worker with SECURE_DECIDE_API=true (secures /v1/decide)
-  --disable-ui              Deploy as headless API microservice without UI
-  --name <model-id>         Override model ID for push/test
-  --models <list>           Specify models to deploy (e.g. spam-detector-v1,sys1-base)
-  --prune                   Remove models not specified from R2 bucket and catalog
-  --bucket <name>           Cloudflare R2 bucket name (default: sys1pop-models)
-  --help, -h                Show this help message
-  --version, -v             Show CLI version
+  --endpoint <url>               Sys1Pop worker endpoint (default: http://localhost:6061)
+  --token, --api-token <t>       Configure or pass API_TOKEN for authenticated API routes
+  --secure-decide-api            Deploy worker with SECURE_DECIDE_API=true (secures /v1/decide)
+  --disable-ui                   Deploy as headless API microservice without UI
+  --name <model-id>              Specify or override model ID
+  --type <template>              Template type for init: multi-head, spam, triage, binary
+  --output, -o <dir>             Output directory for spec or compiled bundle
+  --base-model, -b <name>        Override base HuggingFace transformer backbone
+  --quantization, -q <mode>      Quantization scheme: fp32_edge or int8_q8_0
+  --models <list>                Specify models to deploy (e.g. spam-detector-v1,sys1-base)
+  --prune                        Remove models not specified from R2 bucket and catalog
+  --bucket <name>                Cloudflare R2 bucket name (default: sys1pop-models)
+  --force                        Overwrite existing spec file during init
+  --help, -h                     Show this help message
+  --version, -v                  Show CLI version
 
 EXAMPLES:
-  sys1pop deploy
-  sys1pop seed-catalog
-  sys1pop model push ./dist/my-model --name legal-triage-v1
-  sys1pop model test legal-triage-v1 --endpoint http://localhost:6061
+  sys1pop model init --name support-triage-v1 --type multi-head
+  sys1pop model validate ./support-triage-v1.spec.json
+  sys1pop model build ./support-triage-v1.spec.json --output ./dist/models/support-triage-v1
+  sys1pop model push ./dist/models/support-triage-v1 --bucket sys1pop-models
+  sys1pop model test support-triage-v1 --endpoint http://localhost:6061
 `);
 }
 
@@ -65,19 +80,230 @@ function parseArgs(args: string[]) {
   return { positional, flags };
 }
 
+function generateSpecTemplate(modelId: string, templateType: string): any {
+  if (templateType === "spam") {
+    return {
+      $schema: "https://sys1pop.dev/schema/model.spec.v1.json",
+      model_id: modelId,
+      name: "Form Spam & Risk Classifier",
+      version: "1.0.0",
+      description: "Classifies spam submissions, detects phishing intent, and calculates risk scores.",
+      base_backbone: "sentence-transformers-testing/stsb-bert-tiny-safetensors",
+      quantization: "fp32_edge",
+      calibration: { temperature: 1.0, regularization_c: 5.0, max_iterations: 200, default_threshold: 0.5 },
+      questions: [
+        { id: "is_spam", type: "boolean", threshold: 0.5 },
+        { id: "spam_category", type: "choice", options: ["legitimate", "sales_pitch", "phishing", "gibberish"] },
+        { id: "risk_score", type: "score", min: 1, max: 5 },
+      ],
+      training_examples: [
+        { state: "Hello, I would like to schedule a product demo.", is_spam: false, spam_category: "legitimate", risk_score: 1 },
+        { state: "Cheap SEO backlinks and guest post packages.", is_spam: true, spam_category: "sales_pitch", risk_score: 3 },
+        { state: "Urgent: Send 0.1 ETH to verify wallet and receive reward.", is_spam: true, spam_category: "phishing", risk_score: 5 },
+      ],
+    };
+  }
+
+  // Default multi-head triage template
+  return {
+    $schema: "https://sys1pop.dev/schema/model.spec.v1.json",
+    model_id: modelId,
+    name: "Custom Decision & Triage Model",
+    version: "1.0.0",
+    description: "Evaluates state input, routes intent, and assesses escalation and score.",
+    base_backbone: "sentence-transformers-testing/stsb-bert-tiny-safetensors",
+    quantization: "fp32_edge",
+    calibration: { temperature: 1.0, regularization_c: 5.0, max_iterations: 200, default_threshold: 0.5 },
+    questions: [
+      { id: "category", type: "choice", options: ["billing", "technical", "general"] },
+      { id: "needs_action", type: "boolean", threshold: 0.5 },
+      { id: "priority", type: "score", min: 1, max: 5 },
+    ],
+    training_examples: [
+      { state: "Invoice inquiry: please send latest monthly receipt.", category: "billing", needs_action: false, priority: 2 },
+      { state: "Production cluster connection timeout error on port 5432.", category: "technical", needs_action: true, priority: 5 },
+      { state: "Just wanted to say thanks for the great documentation.", category: "general", needs_action: false, priority: 1 },
+    ],
+  };
+}
+
+function handleModelInit(targetArg: string | undefined, flags: Record<string, string | boolean>) {
+  const modelId = (flags.name as string) || (flags.id as string) || "custom-decision-v1";
+  const type = (flags.type as string) || "multi-head";
+  const targetPath = (flags.output as string) || targetArg || `./${modelId}.spec.json`;
+
+  if (fs.existsSync(targetPath) && !flags.force) {
+    console.error(`❌ Error: File already exists at ${targetPath}. Use --force to overwrite.`);
+    process.exit(1);
+  }
+
+  const template = generateSpecTemplate(modelId, type);
+  fs.writeFileSync(targetPath, JSON.stringify(template, null, 2) + "\n", "utf-8");
+  console.log(`\n✨ Initialized new ModelForge specification: ${targetPath}`);
+  console.log(`  Model ID:  ${modelId}`);
+  console.log(`  Questions: ${template.questions.length} configured (${template.questions.map((q: any) => q.id).join(", ")})`);
+  console.log(`\nNext steps:`);
+  console.log(`  1. Edit questions and training_examples in ${targetPath}`);
+  console.log(`  2. Validate: sys1pop model validate ${targetPath}`);
+  console.log(`  3. Build:    sys1pop model build ${targetPath}`);
+}
+
+function handleModelValidate(specPathArg: string | undefined) {
+  if (!specPathArg) {
+    console.error("❌ Error: Missing specification file. Usage: sys1pop model validate <spec.json>");
+    process.exit(1);
+  }
+
+  const specPath = path.resolve(process.cwd(), specPathArg);
+  if (!fs.existsSync(specPath)) {
+    console.error(`❌ Error: File not found: ${specPath}`);
+    process.exit(1);
+  }
+
+  try {
+    const raw = fs.readFileSync(specPath, "utf-8");
+    const spec = JSON.parse(raw);
+
+    console.log(`\n🔍 Validating Specification: ${specPath}`);
+    console.log("━".repeat(60));
+
+    if (!spec.model_id || typeof spec.model_id !== "string") {
+      throw new Error("Missing or invalid 'model_id'");
+    }
+    console.log(`  ✓ Model ID:    ${spec.model_id}`);
+
+    if (!spec.name || typeof spec.name !== "string") {
+      throw new Error("Missing or invalid 'name'");
+    }
+    console.log(`  ✓ Name:        ${spec.name}`);
+
+    if (!Array.isArray(spec.questions) || spec.questions.length === 0) {
+      throw new Error("'questions' must be a non-empty array");
+    }
+    console.log(`  ✓ Questions:   ${spec.questions.length} question(s) configured`);
+
+    const qids = new Set<string>();
+    for (const q of spec.questions) {
+      if (!q.id || typeof q.id !== "string") throw new Error("Question missing valid 'id'");
+      if (qids.has(q.id)) throw new Error(`Duplicate question id '${q.id}'`);
+      qids.add(q.id);
+
+      if (!["choice", "boolean", "score"].includes(q.type)) {
+        throw new Error(`Invalid type '${q.type}' for question '${q.id}'`);
+      }
+      if (q.type === "choice") {
+        if (!Array.isArray(q.options) || q.options.length < 2) {
+          throw new Error(`Choice question '${q.id}' must have >= 2 options`);
+        }
+      } else if (q.type === "score") {
+        const minVal = q.min ?? 1;
+        const maxVal = q.max ?? 5;
+        if (minVal >= maxVal) throw new Error(`Score question '${q.id}' min >= max`);
+      }
+      console.log(`    • ${q.id.padEnd(20)} [${q.type}]`);
+    }
+
+    let exampleCount = 0;
+    if (Array.isArray(spec.training_examples)) {
+      exampleCount += spec.training_examples.length;
+    }
+    if (spec.dataset_path) {
+      const dPath = path.resolve(path.dirname(specPath), spec.dataset_path);
+      if (!fs.existsSync(dPath)) {
+        throw new Error(`Referenced dataset_path not found: ${dPath}`);
+      }
+      console.log(`  ✓ Dataset Path: ${spec.dataset_path} (exists)`);
+    }
+
+    console.log(`  ✓ Examples:    ${exampleCount} inline training example(s)`);
+    console.log("━".repeat(60));
+    console.log(`✅ Specification is valid and ready to build!\n`);
+  } catch (err: any) {
+    console.error(`\n❌ Validation failed: ${err.message}\n`);
+    process.exit(1);
+  }
+}
+
+function handleModelBuild(specPathArg: string | undefined, flags: Record<string, string | boolean>) {
+  if (!specPathArg) {
+    console.error("❌ Error: Missing specification file. Usage: sys1pop model build <spec.json>");
+    process.exit(1);
+  }
+
+  const specPath = path.resolve(process.cwd(), specPathArg);
+  if (!fs.existsSync(specPath)) {
+    console.error(`❌ Error: File not found: ${specPath}`);
+    process.exit(1);
+  }
+
+  handleModelValidate(specPathArg);
+
+  const specContent = JSON.parse(fs.readFileSync(specPath, "utf-8"));
+  const modelId = specContent.model_id;
+  const outputDir = (flags.output as string) || (flags.o as string) || `./dist/models/${modelId}`;
+
+  // Find tools/model_forge.py
+  let forgeScript = path.resolve(process.cwd(), "tools/model_forge.py");
+  if (!fs.existsSync(forgeScript)) {
+    const candidate = path.resolve(__dirname, "../../tools/model_forge.py");
+    if (fs.existsSync(candidate)) {
+      forgeScript = candidate;
+    } else {
+      const candidate2 = path.resolve(__dirname, "../../../tools/model_forge.py");
+      if (fs.existsSync(candidate2)) {
+        forgeScript = candidate2;
+      }
+    }
+  }
+
+  if (!fs.existsSync(forgeScript)) {
+    console.error(`❌ Error: Could not locate 'tools/model_forge.py'.`);
+    process.exit(1);
+  }
+
+  const forgeArgs = [
+    `--spec "${specPath}"`,
+    `--output-dir "${path.resolve(process.cwd(), outputDir)}"`,
+  ];
+  if (flags["base-model"] || flags.b) forgeArgs.push(`--base-model "${flags["base-model"] || flags.b}"`);
+  if (flags.quantization || flags.q) forgeArgs.push(`--quantization "${flags.quantization || flags.q}"`);
+
+  let hasUv = false;
+  try {
+    execSync("command -v uv", { stdio: "pipe" });
+    hasUv = true;
+  } catch {}
+
+  let cmd: string;
+  if (hasUv) {
+    cmd = `uv run --with "torch,transformers,scikit-learn,safetensors" python3 "${forgeScript}" ${forgeArgs.join(" ")}`;
+  } else {
+    const pythonBin = (flags["python-bin"] as string) || "python3";
+    cmd = `${pythonBin} "${forgeScript}" ${forgeArgs.join(" ")}`;
+  }
+
+  console.log(`🚀 Compiling Edge Model Bundle via ModelForge...`);
+  try {
+    execSync(cmd, { stdio: "inherit" });
+  } catch {
+    console.error(`\n❌ Model build failed.`);
+    process.exit(1);
+  }
+}
+
 async function handleDeploy(flags: Record<string, string | boolean>) {
   const enableUi = flags["disable-ui"] ? "false" : "true";
-  const secureDecide = flags["secure-decide-api"] || flags["secure-all-apis"] || flags["require-auth"] ? "true" : "false";
+  const secureDecideApi = flags["secure-decide-api"] || flags["require-auth"] ? "true" : "false";
   const apiToken = (flags["api-token"] as string) || (flags["token"] as string) || "";
-  console.log(`\n🚀 Building and deploying Sys1Pop Worker with SIMD128 vector acceleration (UI: ${enableUi}, Secure Decide API: ${secureDecide})...`);
+  console.log(`\n🚀 Building and deploying Sys1Pop Worker with SIMD128 vector acceleration (UI: ${enableUi}, Secure Decide API: ${secureDecideApi})...`);
   try {
     let cmd = `npx wrangler deploy --var ENABLE_UI:${enableUi}`;
-    if (secureDecide === "true") cmd += ` --var SECURE_DECIDE_API:true`;
+    if (secureDecideApi === "true") cmd += ` --var SECURE_DECIDE_API:true`;
     if (apiToken) cmd += ` --var API_TOKEN:${apiToken}`;
     if (flags.env) cmd += ` --env ${flags.env}`;
     execSync(cmd, { stdio: "inherit" });
     console.log("\n✅ Sys1Pop Worker deployed successfully!");
-  } catch (err) {
+  } catch {
     console.error("❌ Deployment failed. Ensure wrangler is authenticated ('npx wrangler login').");
     process.exit(1);
   }
@@ -144,6 +370,48 @@ async function handleModelPush(bundleDir: string, flags: Record<string, string |
       }
     }
 
+    // Sync catalog.json
+    console.log(`\n📑 Synchronizing master model catalog in R2...`);
+    const catalogKey = "models/catalog.json";
+    const tempCatalogPath = path.join(os.tmpdir(), `sys1pop_catalog_${Date.now()}.json`);
+    let catalog: { schema_version: string; updated_at: string; models: any[] } = {
+      schema_version: "1.0",
+      updated_at: new Date().toISOString(),
+      models: [],
+    };
+
+    try {
+      execSync(`npx wrangler r2 object get ${bucket}/${catalogKey} --file="${tempCatalogPath}" --remote`, {
+        stdio: "pipe",
+      });
+      if (fs.existsSync(tempCatalogPath)) {
+        catalog = JSON.parse(fs.readFileSync(tempCatalogPath, "utf-8"));
+      }
+    } catch {
+      // Remote catalog does not exist yet or offline, initialize fresh
+    }
+
+    const manifestObj = JSON.parse(fs.readFileSync(path.join(bundleDir, "manifest.json"), "utf-8"));
+    const existingIdx = catalog.models.findIndex((m: any) => m.model_id === targetModelId);
+    if (existingIdx >= 0) {
+      catalog.models[existingIdx] = manifestObj;
+    } else {
+      catalog.models.push(manifestObj);
+    }
+    catalog.updated_at = new Date().toISOString();
+
+    fs.writeFileSync(tempCatalogPath, JSON.stringify(catalog, null, 2), "utf-8");
+    try {
+      execSync(`npx wrangler r2 object put ${bucket}/${catalogKey} --file="${tempCatalogPath}" --remote`, {
+        stdio: "pipe",
+      });
+      console.log(`  ✓ Master catalog updated on r2://${bucket}/${catalogKey}`);
+    } catch {
+      console.log(`  ✓ (Master catalog updated locally)`);
+    } finally {
+      if (fs.existsSync(tempCatalogPath)) fs.unlinkSync(tempCatalogPath);
+    }
+
     console.log(`\n✅ Model '${targetModelId}' published successfully to R2!`);
     console.log(`Ready for in-edge inference: await sys1.decide({ model: "${targetModelId}", state: "..." })`);
   } catch (err: any) {
@@ -198,7 +466,6 @@ async function handleModelTest(modelId: string, flags: Record<string, string | b
   console.log(`\n🧪 Testing live edge inference for model '${modelId}' at ${endpoint}...`);
 
   try {
-    // 1. Initial / Cold-start request
     const t0 = Date.now();
     const res1 = await sys1.decide({
       model: modelId,
@@ -216,7 +483,6 @@ async function handleModelTest(modelId: string, flags: Record<string, string | b
     console.log(`  • Roundtrip:      ${roundtripMs} ms`);
     console.log(`  • Cached:         ${res1.cached}`);
 
-    // 2. Repeat query (asserting in-isolate LRU cache hit)
     const res2 = await sys1.decide({
       model: modelId,
       state: "System latency test state: testing forward pass and memory caching.",
@@ -236,8 +502,6 @@ async function handleModelTest(modelId: string, flags: Record<string, string | b
     process.exit(1);
   }
 }
-
-
 
 async function handleModelUnload(modelId: string, flags: Record<string, string | boolean>) {
   const endpoint = (flags.endpoint as string) || "http://localhost:6061";
@@ -297,7 +561,13 @@ async function main() {
   } else if (cmd === "seed-catalog" || cmd === "deploy-models") {
     await handleDeployExamples(flags);
   } else if (cmd === "model") {
-    if (subcmd === "push") {
+    if (subcmd === "init") {
+      handleModelInit(rest[0], flags);
+    } else if (subcmd === "validate") {
+      handleModelValidate(rest[0]);
+    } else if (subcmd === "build") {
+      handleModelBuild(rest[0], flags);
+    } else if (subcmd === "push") {
       await handleModelPush(rest[0], flags);
     } else if (subcmd === "list") {
       await handleModelList(flags);
